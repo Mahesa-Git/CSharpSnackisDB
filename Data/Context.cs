@@ -1,4 +1,4 @@
-﻿using CSharpSnackisDB.Models.Entities;
+﻿using CSharpSnackisDB.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CSharpSnackisDB.Models.Entities
+namespace CSharpSnackisDB.Data
 {
     public class Context : IdentityDbContext<User>
     {

@@ -136,8 +136,8 @@ namespace CSharpSnackisDB.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -181,8 +181,8 @@ namespace CSharpSnackisDB.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -378,17 +378,17 @@ namespace CSharpSnackisDB.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "root-0c0-aa65-4af8-bd17-00bd9344e575", "638a5ada-554c-4647-b65c-b9a822955884", "root", "ROOT" });
+                values: new object[] { "root-0c0-aa65-4af8-bd17-00bd9344e575", "f5bd014c-adfd-4631-8e4a-8e048f361209", "root", "ROOT" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "user-2c0-aa65-4af8-bd17-00bd9344e575", "9fea9e2e-a13c-41ee-9bc9-f862e0a27e60", "User", "USER" });
+                values: new object[] { "user-2c0-aa65-4af8-bd17-00bd9344e575", "74af8cc2-a579-407a-8c32-1fb209c0d704", "User", "USER" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Country", "CreateDate", "Email", "EmailConfirmed", "IsBanned", "LockoutEnabled", "LockoutEnd", "MailToken", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfileText", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "admin-c0-aa65-4af8-bd17-00bd9344e575", 0, "beb1bc5a-9efc-4064-89ce-02059f217f41", null, new DateTime(2021, 5, 20, 14, 12, 20, 403, DateTimeKind.Local).AddTicks(4872), "admin@csharpsnackis.api", true, false, false, null, null, "ADMIN@csharsnackis.API", "ADMIN", "AQAAAAEAACcQAAAAECbSviwJt3ewIGU+/5kgXI+1x+eux74gWj7XGogoOL9Yf/LZ0Q6df0WsGw11V3t/qw==", null, false, null, "ae58fbc0-df55-4fe4-8b08-314a34de507d", false, "admin" });
+                values: new object[] { "admin-c0-aa65-4af8-bd17-00bd9344e575", 0, "1a747cb1-73e9-4b00-941d-484cff332109", null, new DateTime(2021, 5, 20, 15, 25, 36, 225, DateTimeKind.Local).AddTicks(6159), "admin@csharpsnackis.api", true, false, false, null, null, "ADMIN@csharsnackis.API", "ADMIN", "AQAAAAEAACcQAAAAEC0OOdZikOkXwRsYfOlA1ijEKqTJk953Qzoy5wAjvfxMPtjoPZZKYQLDuKTU+9u0TQ==", null, false, null, "8ad41be9-2a8e-4a59-9f5f-4e3b6517f596", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

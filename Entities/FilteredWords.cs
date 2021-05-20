@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSharpSnackisDB.Models.Entities
+namespace CSharpSnackisDB.Entities
 {
     public class FilteredWords
     {

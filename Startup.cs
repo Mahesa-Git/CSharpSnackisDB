@@ -1,5 +1,5 @@
 using CSharpSnackisDB.Models;
-using CSharpSnackisDB.Models.Entities;
+using CSharpSnackisDB.Entities;
 using CSharpSnackisDB.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -109,8 +109,6 @@ namespace CSharpSnackisDB
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
-
-            services.AddDbContext<Context>(options => options.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
