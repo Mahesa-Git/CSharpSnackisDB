@@ -20,7 +20,7 @@ namespace CSharpSnackisDB.Controllers
     [Authorize]
     public class UserAuthController : ControllerBase
     {
-        private const string ApiKey = "";
+        private const string ApiKey = "localhost:44302";
         private const string FeKey = "";
 
         private Context _context;
@@ -88,8 +88,6 @@ namespace CSharpSnackisDB.Controllers
             }
         }
 
-
-
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterModel model)
@@ -101,6 +99,8 @@ namespace CSharpSnackisDB.Controllers
                 Country = model.Country,
                 MailToken = null,
                 EmailConfirmed = false,
+                ProfileText = model.ProfileText
+                
             };
             if (newUser.UserName.Contains(' '))
             {
@@ -129,8 +129,8 @@ namespace CSharpSnackisDB.Controllers
                 user.MailToken = token;
                 await _context.SaveChangesAsync();
 
-                var urlContent = Url.Content($"https://localhost:44302/userauth/Mailauthentication/{userId}");
-                var link = Url.Content("https://localhost:44384/index"); // ÄNDRAS SEN FE
+                var urlContent = Url.Content($"https://{ApiKey}/userauth/Mailauthentication/{userId}");
+                var link = Url.Content($"https://{FeKey}/index"); // ÄNDRAS SEN FE
 
                 await _sender.SendEmailAsync(newUser.Email, "Bekräfta din e-post genom att klicka på länken", "<p>Klicka här för att bekräfta din e-post</p>" + urlContent +
                                                             "</br></br><p>Fungerar inte länken? Få ett nytt utskick genom att försöka logga in på hemsidan:</br></br>" +
@@ -143,7 +143,6 @@ namespace CSharpSnackisDB.Controllers
                 return BadRequest("Registration failed");
             }
         }
-
 
         [HttpDelete("userdelete")]
         public async Task<ActionResult> UserDelete()
@@ -165,7 +164,6 @@ namespace CSharpSnackisDB.Controllers
             return Ok();
 
         }
-
 
         [HttpPut("userupdate")]
         public async Task<ActionResult> UserUpdate([FromBody] RegisterModel model)
@@ -250,13 +248,13 @@ namespace CSharpSnackisDB.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user is not null)
             {
-                var urlContent = Url.Content($"https://localhost:44302/userauth/Mailauthentication/{user.Id}");
-                var link = Url.Content("https://localhost:44384/index"); // ändra sen FE
+                var urlContent = Url.Content($"https://{ApiKey}/userauth/Mailauthentication/{user.Id}");
+                var link = Url.Content($"https://{FeKey}/index"); // ändra sen FE
 
                 await _sender.SendEmailAsync(user.Email, "Bekräfta din e-post genom att klicka på länken", "<p>Klicka här för att bekräfta din e-post</p>" + urlContent +
                                                             "</br></br><p>Fungerar inte länken? Få ett nytt utskick genom att försöka logga in på hemsidan:</br></br>" +
                                                             $" {link}");
-                return Redirect("https://localhost:44384/RegisterConfirmation"); // ÄNDRA SEN FE
+                return Redirect($"https://{FeKey}/RegisterConfirmation"); // ÄNDRA SEN FE
             }
             else
                 return BadRequest("User not found. Try to create another user or contact us at ggwebbshop@gmail.com");
@@ -280,7 +278,7 @@ namespace CSharpSnackisDB.Controllers
             {
                 user.MailToken = null;
                 await _context.SaveChangesAsync();
-                return Redirect("https://localhost:44384/SuccessfulEmailConfirm"); // ÄNDRA SEN FE
+                return Redirect($"https://{FeKey}/SuccessfulEmailConfirm"); // ÄNDRA SEN FE
             }
 
             else
@@ -320,5 +318,4 @@ namespace CSharpSnackisDB.Controllers
             }
         }
     }
-
 }
