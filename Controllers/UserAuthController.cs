@@ -20,6 +20,9 @@ namespace CSharpSnackisDB.Controllers
     [Authorize]
     public class UserAuthController : ControllerBase
     {
+        private const string ApiKey = "";
+        private const string FeKey = "";
+
         private Context _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
