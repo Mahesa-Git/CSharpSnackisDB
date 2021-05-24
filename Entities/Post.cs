@@ -7,7 +7,7 @@ namespace CSharpSnackisDB.Entities
 {
     public class Post
     {
-        public Guid PostID { get; set; }
+        public string PostID { get; set; }
         public string Title { get; set; }
         public string BodyText { get; set; }
         public DateTime CreateDate { get; set; }
@@ -19,7 +19,7 @@ namespace CSharpSnackisDB.Entities
 
         public Post()
         {
-            PostID = Guid.NewGuid();
+            PostID = Guid.NewGuid().ToString();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace CSharpSnackisDB.Entities
 {
     public class Reply
     {
-        public Guid ReplyID { get; set; }
+        public string ReplyID { get; set; }
         public string BodyText { get; set; }
         public DateTime CreateDate { get; set; }
         public bool IsReported { get; set; }
@@ -18,7 +18,7 @@ namespace CSharpSnackisDB.Entities
 
         public Reply()
         {
-            ReplyID = Guid.NewGuid();
+            ReplyID = Guid.NewGuid().ToString();
         }
     }
 }

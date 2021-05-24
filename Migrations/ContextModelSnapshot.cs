@@ -21,10 +21,8 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Category", b =>
                 {
-                    b.Property<int>("CategoryID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("CategoryID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -42,9 +40,8 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.FilteredWords", b =>
                 {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Words")
                         .HasColumnType("nvarchar(max)");
@@ -56,9 +53,8 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.GroupChat", b =>
                 {
-                    b.Property<Guid>("GroupChatID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupChatID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -70,15 +66,14 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Post", b =>
                 {
-                    b.Property<Guid>("PostID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PostID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BodyText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CategoryID")
-                        .HasColumnType("int");
+                    b.Property<string>("CategoryID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -86,8 +81,8 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("ThreadID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ThreadID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -108,18 +103,17 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.PostReaction", b =>
                 {
-                    b.Property<Guid>("PostReactionID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PostReactionID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Counter")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("PostID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PostID")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("ReplyID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ReplyID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("TypeID")
                         .HasColumnType("int");
@@ -135,27 +129,26 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Reply", b =>
                 {
-                    b.Property<Guid>("ReplyID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ReplyID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BodyText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CategoryID")
-                        .HasColumnType("int");
+                    b.Property<string>("CategoryID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("GroupChatID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupChatID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("PostID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PostID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -175,9 +168,8 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Thread", b =>
                 {
-                    b.Property<Guid>("ThreadID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ThreadID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BodyText")
                         .HasColumnType("nvarchar(max)");
@@ -191,8 +183,8 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TopicID")
-                        .HasColumnType("int");
+                    b.Property<string>("TopicID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -208,13 +200,11 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Topic", b =>
                 {
-                    b.Property<int>("TopicID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("TopicID")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("CategoryID")
-                        .HasColumnType("int");
+                    b.Property<string>("CategoryID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -313,17 +303,17 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1a747cb1-73e9-4b00-941d-484cff332109",
-                            CreateDate = new DateTime(2021, 5, 20, 15, 25, 36, 225, DateTimeKind.Local).AddTicks(6159),
+                            ConcurrencyStamp = "f56ad6d5-ece2-4802-8cef-b24aee22426f",
+                            CreateDate = new DateTime(2021, 5, 24, 16, 17, 24, 664, DateTimeKind.Local).AddTicks(544),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEC0OOdZikOkXwRsYfOlA1ijEKqTJk953Qzoy5wAjvfxMPtjoPZZKYQLDuKTU+9u0TQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBNFFoij5oM48N9ZmJn0GzRt7TkxOqEjTuWVDYBkMuLCkLnat0TIVfR0awJZvRuGPA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8ad41be9-2a8e-4a59-9f5f-4e3b6517f596",
+                            SecurityStamp = "c788024a-9239-439c-ba71-67c1cd634d6f",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -331,8 +321,8 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("GroupChatUser", b =>
                 {
-                    b.Property<Guid>("GroupChatsGroupChatID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupChatsGroupChatID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UsersId")
                         .HasColumnType("nvarchar(450)");
@@ -374,14 +364,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "f5bd014c-adfd-4631-8e4a-8e048f361209",
+                            ConcurrencyStamp = "4ea49ad0-c976-43be-9c5a-48a79e035fed",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "74af8cc2-a579-407a-8c32-1fb209c0d704",
+                            ConcurrencyStamp = "dd68a650-7410-42a4-8e53-875a95378c61",
                             Name = "User",
                             NormalizedName = "USER"
                         });

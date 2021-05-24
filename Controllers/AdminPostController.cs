@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -22,7 +20,6 @@ namespace CSharpSnackisDB.Controllers
 
         private Context _context;
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
 
         public AdminPostController(Context context, UserManager<User> userManager)
         {
@@ -48,6 +45,68 @@ namespace CSharpSnackisDB.Controllers
             }
             else
                 return Unauthorized();
+        }
+        [HttpPost("CreateCategory")]
+        public async Task<ActionResult> CreateCatergories([FromBody] Category newCategory)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("root") || roles.Contains("admin"))
+            {
+                await _context.Categories.AddAsync(newCategory);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return Unauthorized();
+        }
+
+        [HttpDelete("DeleteCategory/{id}")]
+        public async Task<ActionResult> DeleteCatergories([FromRoute] string id)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("root") || roles.Contains("admin"))
+            {
+                var result = _context.Categories.Where(x => x.CategoryID == id).FirstOrDefault();
+
+                _context.Remove(result);
+
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return Unauthorized();
+        }
+        [HttpPut("UpdateCategory/{id}")]
+        public async Task<ActionResult> UpdateCategory([FromBody] Category category, string id)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("root") || roles.Contains("admin"))
+            {
+                var updateCategory = _context.Categories.Where(x => x.CategoryID == id).FirstOrDefault();
+
+                updateCategory.Title = category.Title;
+                updateCategory.Description = category.Description;
+                updateCategory.CreateDate = category.CreateDate;
+
+                _context.Update(updateCategory);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return Unauthorized();
+        }
+        [AllowAnonymous]
+        [HttpGet("ReadCategory")]
+        public async Task<ActionResult> ReadCategory()
+        {
+            var allCategories = await _context.Categories.ToListAsync();
+            return Ok(allCategories);
         }
     }
 }
