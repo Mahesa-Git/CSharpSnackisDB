@@ -47,7 +47,7 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
         [HttpPost("CreateCategory")]
-        public async Task<ActionResult> CreateCatergories([FromBody] Category newCategory)
+        public async Task<ActionResult> CreateCategories([FromBody] Category newCategory)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
@@ -63,7 +63,7 @@ namespace CSharpSnackisDB.Controllers
         }
 
         [HttpDelete("DeleteCategory/{id}")]
-        public async Task<ActionResult> DeleteCatergories([FromRoute] string id)
+        public async Task<ActionResult> DeleteCategories([FromRoute] string id)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
@@ -108,5 +108,71 @@ namespace CSharpSnackisDB.Controllers
             var allCategories = await _context.Categories.ToListAsync();
             return Ok(allCategories);
         }
+
+        [HttpPost("CreateTopic")]
+        public async Task<ActionResult> CreateTopics([FromBody] Topic newTopic)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("root") || roles.Contains("admin"))
+            {
+                await _context.Topics.AddAsync(newTopic);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return Unauthorized();
+        }
+
+        [HttpDelete("DeleteTopic/{id}")]
+        public async Task<ActionResult> DeleteTopics([FromRoute] string id)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("root") || roles.Contains("admin"))
+            {
+                var result = _context.Topics.Where(x => x.TopicID == id).FirstOrDefault();
+
+                _context.Remove(result);
+
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return Unauthorized();
+        }
+
+        [HttpPut("UpdateTopic/{id}")]
+        public async Task<ActionResult> UpdateTopic([FromBody] Topic topics, string id)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("root") || roles.Contains("admin"))
+            {
+                var updateTopic = _context.Topics.Where(x => x.TopicID == id).FirstOrDefault();
+
+                updateTopic.Title = topics.Title;
+                updateTopic.Category = topics.Category;
+                updateTopic.CreateDate = topics.CreateDate;
+
+                _context.Update(updateTopic);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return Unauthorized();
+        }
+
+        [HttpGet("ReadTopic")]
+        public async Task<ActionResult> ReadTopics()
+        {
+            var allTopics = await _context.Topics.ToListAsync();
+            return Ok(allTopics);
+        }
+
+
     }
 }
