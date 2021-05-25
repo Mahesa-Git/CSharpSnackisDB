@@ -7,14 +7,14 @@ namespace CSharpSnackisDB.Entities
 {
     public class GroupChat
     {
-        public Guid GroupChatID { get; set; }
+        public string GroupChatID { get; set; }
         public List<User> Users { get; set; }
         public List<Reply> Replies { get; set; }
         public DateTime CreateDate { get; set; }
 
         public GroupChat()
         {
-            GroupChatID = Guid.NewGuid();
+            GroupChatID = Guid.NewGuid().ToString();
         }
     }
 }

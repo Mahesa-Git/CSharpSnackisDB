@@ -21,10 +21,8 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Category", b =>
                 {
-                    b.Property<int>("CategoryID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("CategoryID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -42,9 +40,8 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.FilteredWords", b =>
                 {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Words")
                         .HasColumnType("nvarchar(max)");
@@ -56,9 +53,8 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.GroupChat", b =>
                 {
-                    b.Property<Guid>("GroupChatID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupChatID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -70,15 +66,11 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Post", b =>
                 {
-                    b.Property<Guid>("PostID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PostID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BodyText")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CategoryID")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -86,8 +78,8 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("ThreadID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ThreadID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -96,8 +88,6 @@ namespace CSharpSnackisDB.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("PostID");
-
-                    b.HasIndex("CategoryID");
 
                     b.HasIndex("ThreadID");
 
@@ -108,18 +98,17 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.PostReaction", b =>
                 {
-                    b.Property<Guid>("PostReactionID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PostReactionID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Counter")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("PostID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PostID")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("ReplyID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ReplyID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("TypeID")
                         .HasColumnType("int");
@@ -135,34 +124,28 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Reply", b =>
                 {
-                    b.Property<Guid>("ReplyID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ReplyID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BodyText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CategoryID")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("GroupChatID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupChatID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("PostID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PostID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ReplyID");
-
-                    b.HasIndex("CategoryID");
 
                     b.HasIndex("GroupChatID");
 
@@ -175,9 +158,8 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Thread", b =>
                 {
-                    b.Property<Guid>("ThreadID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ThreadID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BodyText")
                         .HasColumnType("nvarchar(max)");
@@ -191,8 +173,8 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TopicID")
-                        .HasColumnType("int");
+                    b.Property<string>("TopicID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -208,13 +190,11 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Topic", b =>
                 {
-                    b.Property<int>("TopicID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("TopicID")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("CategoryID")
-                        .HasColumnType("int");
+                    b.Property<string>("CategoryID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -313,17 +293,17 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1a747cb1-73e9-4b00-941d-484cff332109",
-                            CreateDate = new DateTime(2021, 5, 20, 15, 25, 36, 225, DateTimeKind.Local).AddTicks(6159),
+                            ConcurrencyStamp = "7ab3c318-5334-40c4-a05f-f067e1112c45",
+                            CreateDate = new DateTime(2021, 5, 25, 16, 1, 34, 142, DateTimeKind.Local).AddTicks(2130),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEC0OOdZikOkXwRsYfOlA1ijEKqTJk953Qzoy5wAjvfxMPtjoPZZKYQLDuKTU+9u0TQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAECxcQU5sxuC0dga+N5a5JgJyZW7bkkPKKfp2cqKcGowEN1ha2DATi++NZGwn5LfE+w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8ad41be9-2a8e-4a59-9f5f-4e3b6517f596",
+                            SecurityStamp = "2a52cfd5-e7d6-4b14-9382-14bbeeb74548",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -331,8 +311,8 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("GroupChatUser", b =>
                 {
-                    b.Property<Guid>("GroupChatsGroupChatID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupChatsGroupChatID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UsersId")
                         .HasColumnType("nvarchar(450)");
@@ -374,14 +354,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "f5bd014c-adfd-4631-8e4a-8e048f361209",
+                            ConcurrencyStamp = "c2bde3cd-5894-4bc3-ad8b-4b841d21afe9",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "74af8cc2-a579-407a-8c32-1fb209c0d704",
+                            ConcurrencyStamp = "8166288c-f0fa-43fd-9469-691199e08de9",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -504,11 +484,7 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Post", b =>
                 {
-                    b.HasOne("CSharpSnackisDB.Entities.Category", "Category")
-                        .WithMany("Posts")
-                        .HasForeignKey("CategoryID");
-
-                    b.HasOne("CSharpSnackisDB.Entities.Thread", null)
+                    b.HasOne("CSharpSnackisDB.Entities.Thread", "Thread")
                         .WithMany("Posts")
                         .HasForeignKey("ThreadID");
 
@@ -516,7 +492,7 @@ namespace CSharpSnackisDB.Migrations
                         .WithMany("Posts")
                         .HasForeignKey("UserId");
 
-                    b.Navigation("Category");
+                    b.Navigation("Thread");
 
                     b.Navigation("User");
                 });
@@ -538,10 +514,6 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Reply", b =>
                 {
-                    b.HasOne("CSharpSnackisDB.Entities.Category", "Category")
-                        .WithMany("Replies")
-                        .HasForeignKey("CategoryID");
-
                     b.HasOne("CSharpSnackisDB.Entities.GroupChat", "GroupChat")
                         .WithMany("Replies")
                         .HasForeignKey("GroupChatID");
@@ -553,8 +525,6 @@ namespace CSharpSnackisDB.Migrations
                     b.HasOne("CSharpSnackisDB.Entities.User", "User")
                         .WithMany("Replies")
                         .HasForeignKey("UserId");
-
-                    b.Navigation("Category");
 
                     b.Navigation("GroupChat");
 
@@ -655,10 +625,6 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Category", b =>
                 {
-                    b.Navigation("Posts");
-
-                    b.Navigation("Replies");
-
                     b.Navigation("Topics");
                 });
 

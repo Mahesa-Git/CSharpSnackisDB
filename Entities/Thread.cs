@@ -7,7 +7,7 @@ namespace CSharpSnackisDB.Entities
 {
     public class Thread
     {
-        public Guid ThreadID { get; set; }
+        public string ThreadID { get; set; }
         public User User { get; set; }
         public string Title { get; set; }
         public string BodyText { get; set; }
@@ -17,7 +17,14 @@ namespace CSharpSnackisDB.Entities
         public List<Post> Posts { get; set; }
         public Thread()
         {
-            ThreadID = Guid.NewGuid();
+            ThreadID = Guid.NewGuid().ToString();
+            CreateDate = DateTime.Now;
         }
+    }
+    public class ThreadResponseModel
+    {
+        public string Title { get; set; }
+        public string BodyText { get; set; }
+        public string TopicId { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace CSharpSnackisDB.Entities
 {
     public class PostReaction
     {
-        public Guid PostReactionID { get; set; }
+        public string PostReactionID { get; set; }
         public Post Post { get; set; }
         public Reply Reply { get; set; }
         public int TypeID { get; set; }
@@ -15,7 +15,7 @@ namespace CSharpSnackisDB.Entities
 
         public PostReaction()
         {
-            PostReactionID = Guid.NewGuid();
+            PostReactionID = Guid.NewGuid().ToString();
         }
     }
 }
