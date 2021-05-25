@@ -37,6 +37,20 @@ namespace CSharpSnackisDB.Controllers
         }
 
         #region LOGIN/REGISTER/MAILAUTHENTICATION REGION
+
+        private bool MailChecker(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginModel model)
@@ -112,6 +126,9 @@ namespace CSharpSnackisDB.Controllers
 
             if (UserCheck != null)
                 return BadRequest("Username in use");
+
+            if (!MailChecker(model.Email))
+                return BadRequest("wrong email format");
 
             if (UserMailCheck != null)
                 return BadRequest("E-mail in use");
