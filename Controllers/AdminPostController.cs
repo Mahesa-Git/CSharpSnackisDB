@@ -166,6 +166,7 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
+        [AllowAnonymous]
         [HttpGet("ReadTopic")]
         public async Task<ActionResult> ReadTopics()
         {
@@ -174,5 +175,23 @@ namespace CSharpSnackisDB.Controllers
         }
 
 
+        [HttpDelete("DeletePost/{id}")]
+        public async Task<ActionResult> DeletePosts([FromRoute] string id)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("root") || roles.Contains("admin"))
+            {
+                var result = _context.Posts.Where(x => x.PostID == id).FirstOrDefault();
+
+                _context.Remove(result);
+
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return Unauthorized();
+        }
     }
 }
