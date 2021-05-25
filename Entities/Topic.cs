@@ -19,8 +19,9 @@ namespace CSharpSnackisDB.Entities
             CreateDate = DateTime.Now;
         }
     }
-    public class TopicResponsemodel
+    public class TopicResponseModel
     {
         public string Title { get; set; }
+        public string CategoryId { get; set; }
     }
 }

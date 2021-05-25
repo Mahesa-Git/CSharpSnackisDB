@@ -27,15 +27,21 @@ namespace CSharpSnackisDB.Controllers
             _context = context;
             _userManager = userManager;
         }
-
-        #region CATEGORIES CRUD
-        [HttpGet("GetStatistics")]
-        public async Task<ActionResult> GetStatistics()
+        private async Task<bool> IsAdmin()
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
-
             if (roles.Contains("root") || roles.Contains("admin"))
+                return true;
+            else
+                return false;
+        }
+
+        #region CATEGORIES CRUD REGION
+        [HttpGet("GetStatistics")]
+        public async Task<ActionResult> GetStatistics()
+        {
+            if (IsAdmin().Result == true)
             {
                 var posts = await _context.Posts.CountAsync();
                 var threads = await _context.Threads.CountAsync();
@@ -53,10 +59,7 @@ namespace CSharpSnackisDB.Controllers
         [HttpPost("CreateCategory")]
         public async Task<ActionResult> CreateCategories([FromBody] CategoryResponseModel newCategory)
         {
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            var roles = await _userManager.GetRolesAsync(user);
-
-            if (roles.Contains("root") || roles.Contains("admin"))
+            if (IsAdmin().Result == true)
             {
                 var category = new Category
                 {
@@ -74,10 +77,7 @@ namespace CSharpSnackisDB.Controllers
         [HttpDelete("DeleteCategory/{id}")]
         public async Task<ActionResult> DeleteCategories([FromRoute] string id)
         {
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            var roles = await _userManager.GetRolesAsync(user);
-
-            if (roles.Contains("root") || roles.Contains("admin"))
+            if (IsAdmin().Result == true)
             {
                 var category = _context.Categories.Where(x => x.CategoryID == id).FirstOrDefault();
                 var topics = category.Topics;
@@ -106,13 +106,11 @@ namespace CSharpSnackisDB.Controllers
             else
                 return Unauthorized();
         }
+
         [HttpPut("UpdateCategory/{id}")]
         public async Task<ActionResult> UpdateCategory([FromBody] CategoryResponseModel updateCategory, string id)
         {
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            var roles = await _userManager.GetRolesAsync(user);
-
-            if (roles.Contains("root") || roles.Contains("admin"))
+            if (IsAdmin().Result == true)
             {
                 var category = _context.Categories.Where(x => x.CategoryID == id).FirstOrDefault();
 
@@ -129,14 +127,11 @@ namespace CSharpSnackisDB.Controllers
         }
         #endregion
 
-        #region TOPICS CRUD
+        #region TOPICS CRUD REGION
         [HttpPost("CreateTopic")]
         public async Task<ActionResult> CreateTopics([FromBody] TopicResponseModel newTopic)
         {
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            var roles = await _userManager.GetRolesAsync(user);
-
-            if (roles.Contains("root") || roles.Contains("admin"))
+            if (IsAdmin().Result == true)
             {
                 var category = _context.Categories.Where(x => x.CategoryID == newTopic.CategoryId).FirstOrDefault();
                 var topic = new Topic
@@ -156,10 +151,7 @@ namespace CSharpSnackisDB.Controllers
         [HttpDelete("DeleteTopic/{id}")]
         public async Task<ActionResult> DeleteTopics([FromRoute] string id)
         {
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            var roles = await _userManager.GetRolesAsync(user);
-
-            if (roles.Contains("root") || roles.Contains("admin"))
+            if (IsAdmin().Result == true)
             {
                 var topic = _context.Topics.Where(x => x.TopicID == id).FirstOrDefault();
                 var threads = topic.Threads;
@@ -184,20 +176,56 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-        [HttpPut("UpdateTopic/{TopicId}")]
-        public async Task<ActionResult> UpdateTopic([FromBody] Topic inputTopic, Category categoryToChange)
+        [HttpPut("UpdateTopic/{newCategoryId}")]
+        public async Task<ActionResult> UpdateTopic([FromBody] Topic inputTopic, string newCategoryId)
         {
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            var roles = await _userManager.GetRolesAsync(user);
-
-            if (roles.Contains("root") || roles.Contains("admin"))
+            if (IsAdmin().Result == true)
             {
+                var newCategory = _context.Categories.Where(x => x.CategoryID == newCategoryId).FirstOrDefault();
                 var topic = inputTopic;
-                topic.Category = categoryToChange;
+                topic.Category = newCategory;
 
                 _context.Update(topic);
                 await _context.SaveChangesAsync();
                 return Ok();
+            }
+            else
+                return Unauthorized();
+        }
+        #endregion
+
+        #region GET REPORTED POSTS AND REPLIES REGION
+        [HttpGet("GetReportedPosts")]
+        public async Task<ActionResult> GetReportedPost()
+        {
+            if (IsAdmin().Result == true)
+            {
+                var reportedPosts = await _context.Posts.Where(x => x.IsReported == true).ToListAsync();
+                return Ok(reportedPosts);
+            }
+            else
+                return Unauthorized();
+        }
+
+        [HttpGet("GetReportedReplies")]
+        public async Task<ActionResult> GetReportedReplies()
+        {
+            if (IsAdmin().Result == true)
+            {
+                var reportedReplies = await _context.Replies.Where(x => x.IsReported == true).ToListAsync();
+                return Ok(reportedReplies);
+            }
+            else
+                return Unauthorized();
+        }
+
+        [HttpGet("GetReportedThreads")]
+        public async Task<ActionResult> GetReportedThreads()
+        {
+            if (IsAdmin().Result == true)
+            {
+                var reportedThreads = await _context.Threads.Where(x => x.IsReported == true).ToListAsync();
+                return Ok(reportedThreads);
             }
             else
                 return Unauthorized();

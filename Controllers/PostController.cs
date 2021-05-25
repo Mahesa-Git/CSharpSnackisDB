@@ -4,41 +4,92 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using static CSharpSnackisDB.Entities.Reply;
 
 namespace CSharpSnackisDB.Controllers
 {
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class UserPostController : ControllerBase
+    public class PostController : ControllerBase
     {
         private const string ApiKey = "localhost:44302";
         private const string FeKey = "";
 
         private Context _context;
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
 
-        public UserPostController(Context context, UserManager<User> userManager, SignInManager<User> signInManager)
+        public PostController(Context context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
-        [HttpPost("CreateThread")]
-        public async Task<ActionResult> CreateThread([FromBody] Thread newThread)
+        #region READ DATA REGION
+        [AllowAnonymous]
+        [HttpGet("ReadCategory")]
+        public async Task<ActionResult> ReadCategories()
+        {
+            var allCategories = await _context.Categories.ToListAsync();
+            return Ok(allCategories);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ReadTopicsInCategory/{categoryId}")]
+        public async Task<ActionResult> ReadTopicsInCategory(string categoryID)
+        {
+            var category = _context.Categories.Where(x => x.CategoryID == categoryID).FirstOrDefault();
+            var allTopics = await _context.Topics.Where(x => x.Category == category).ToListAsync();
+            return Ok(allTopics);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ReadThreadsInTopic/{TopicId}")]
+        public async Task<ActionResult> ReadThreadsInTopics(string topicID)
+        {
+            var topic = _context.Topics.Where(x => x.TopicID == topicID).FirstOrDefault();
+            var allThreads = await _context.Threads.Where(x => x.Topic == topic).ToListAsync();
+            return Ok(allThreads);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ReadPostsInThread/{ThreadId}")]
+        public async Task<ActionResult> ReadPostsInThread(string threadID)
+        {
+            var thread = _context.Threads.Where(x => x.ThreadID == threadID).FirstOrDefault();
+            var allPosts = await _context.Posts.Where(x => x.Thread == thread).ToListAsync();
+            return Ok(allPosts);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ReadRepliesToPost/{PostId}")]
+        public async Task<ActionResult> ReadRepliesToPost(string postID)
+        {
+            var post = _context.Posts.Where(x => x.PostID == postID).FirstOrDefault();
+            var allReplies = await _context.Replies.Where(x => x.Post == post).ToListAsync();
+            return Ok(allReplies);
+        }
+        #endregion
+
+        #region THREADS CRUD REGION
+        [HttpPost("CreateThread")] //godkänd
+        public async Task<ActionResult> CreateThread([FromBody] ThreadResponseModel thread)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            if (roles.Contains("root") || roles.Contains("admin") || roles.Contains("user"))
+            if (user is not null)
             {
+                var topic = _context.Topics.Where(x => x.TopicID == thread.TopicId).FirstOrDefault();
+                var newThread = new Thread
+                {
+                    Title = thread.Title,
+                    BodyText = thread.BodyText,
+                    Topic = topic
+                };
                 await _context.Threads.AddAsync(newThread);
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -53,10 +104,10 @@ namespace CSharpSnackisDB.Controllers
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            if (roles.Contains("root") || roles.Contains("admin") || roles.Contains("user"))
-            {
-                var result = _context.Threads.Where(x => x.ThreadID == id).FirstOrDefault();
+            var result = _context.Threads.Where(x => x.ThreadID == id).FirstOrDefault();
 
+            if (roles.Contains("root") || roles.Contains("admin") || result.User.Id == user.Id)
+            {
                 _context.Remove(result);
 
                 await _context.SaveChangesAsync();
@@ -72,10 +123,10 @@ namespace CSharpSnackisDB.Controllers
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            if (roles.Contains("root") || roles.Contains("admin") || roles.Contains("user"))
-            {
-                var updateThread = _context.Threads.Where(x => x.ThreadID == id).FirstOrDefault();
+            var updateThread = _context.Threads.Where(x => x.ThreadID == id).FirstOrDefault();
 
+            if (roles.Contains("root") || roles.Contains("admin") || updateThread.User.Id == user.Id)
+            {
                 updateThread.Title = thread.Title;
                 updateThread.BodyText = thread.BodyText;
                 updateThread.CreateDate = thread.CreateDate;
@@ -88,27 +139,26 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-        [AllowAnonymous]
-        [HttpGet("ReadThread")]
-        public async Task<ActionResult> ReadThread()
-        {
-            var allThreads = await _context.Threads.ToListAsync();
-            return Ok(allThreads);
-        }
 
-        /// <summary>
-        /// /////////////
-        /// </summary>
-        /// <returns></returns>
+        #endregion REGION
 
-        [HttpPost("CreatePost")]
-        public async Task<ActionResult> CreatePost([FromBody] Post newPost)
+        #region POST CRUD REGION
+        [HttpPost("CreatePost")] //godkänd
+        public async Task<ActionResult> CreatePost([FromBody] PostResponseModel post)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            if (roles.Contains("root") || roles.Contains("admin") || roles.Contains("user"))
+            if (user is not null)
             {
+                var thread = _context.Threads.Where(x => x.ThreadID == post.ThreadId).FirstOrDefault();
+                var newPost = new Post
+                {
+                    Title = post.Title,
+                    BodyText = post.BodyText,
+                    Thread = thread
+                };
+
                 await _context.Posts.AddAsync(newPost);
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -117,18 +167,22 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-        [HttpDelete("DeletePost/{id}")]
-        public async Task<ActionResult> DeletePost([FromRoute] string id)
+        [HttpDelete("DeletePost/{id}")] //GODKÄND
+        public async Task<ActionResult> DeletePosts([FromRoute] string id)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            if (roles.Contains("root") || roles.Contains("admin") || roles.Contains("user"))
+            var post = _context.Posts.Where(x => x.PostID == id).FirstOrDefault();
+
+            if (roles.Contains("root") || roles.Contains("admin") || post.User.Id == user.Id)
             {
-                var result = _context.Posts.Where(x => x.PostID == id).FirstOrDefault();
 
-                _context.Remove(result);
+                var replies = post.Replies;
+                _context.Remove(replies);
+                await _context.SaveChangesAsync();
 
+                _context.Remove(post);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -136,13 +190,13 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-        [HttpPut("UpdatePost/{id}")]
+        [HttpPut("UpdatePost/{id}")]//godkänd
         public async Task<ActionResult> UpdatePost([FromBody] Post post, string id)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            if (roles.Contains("root") || roles.Contains("admin") || roles.Contains("user"))
+            if (roles.Contains("root") || roles.Contains("admin") || post.User.Id == user.Id)
             {
                 var updatePost = _context.Posts.Where(x => x.PostID == id).FirstOrDefault();
 
@@ -157,21 +211,45 @@ namespace CSharpSnackisDB.Controllers
             else
                 return Unauthorized();
         }
+        #endregion
 
-        [HttpPut("ReplyPost/{id}")]
-        public async Task<ActionResult> ReplyPost([FromBody] Reply reply, string id)
+        #region REPLY CRUD REGION
+        [HttpPost("CreateReply")]//godkänd
+        public async Task<ActionResult> CreateReply([FromBody] ReplyResponseModel reply)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            if (roles.Contains("root") || roles.Contains("admin") || roles.Contains("user"))
+            if (user is not null)
             {
-                var replyPost = _context.Replies.Where(x => x.ReplyID == id).FirstOrDefault();
+                var post = _context.Posts.Where(x => x.PostID == reply.PostId).FirstOrDefault();
+                var newReply = new Reply
+                {
+                    User = user,
+                    Post = post,
+                    BodyText = reply.BodyText
+                };
+                _context.Add(newReply);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return Unauthorized();
+        }
+        [HttpPut("UpdateReply")] //Godkänd
+        public async Task<ActionResult> UpdateReply([FromBody] Reply reply)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
 
-                replyPost.BodyText = reply.BodyText;
-                replyPost.CreateDate = reply.CreateDate;
+            if (roles.Contains("root") || roles.Contains("admin") || reply.User.Id == user.Id)
+            {
+                var replyResult = _context.Replies.Where(x => x.ReplyID == reply.ReplyID).FirstOrDefault();
 
-                _context.Update(replyPost);
+                replyResult.BodyText = reply.BodyText;
+                replyResult.CreateDate = reply.CreateDate;
+
+                _context.Update(replyResult);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -179,16 +257,24 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-
-        [AllowAnonymous]
-        [HttpGet("ReadPost")]
-        public async Task<ActionResult> ReadPost(Thread thread)
+        [HttpDelete("DeleteReply/{id}")] //GODKÄND
+        public async Task<ActionResult> DeleteReply([FromRoute] string id)
         {
-            var selectThread = await _context.Threads.Where(x => x.Topic == thread.Topic).ToListAsync();
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
 
-            //var allPosts = _context.Posts.Where(x => x)
+            var result = _context.Replies.Where(x => x.ReplyID == id).FirstOrDefault();
 
-            return Ok(selectThread);
+            if (roles.Contains("root") || roles.Contains("admin") || result.User.Id == user.Id)
+            {
+                _context.Remove(result);
+
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return Unauthorized();
         }
+        #endregion
     }
 }

@@ -13,6 +13,7 @@ namespace CSharpSnackisDB.Entities
         public DateTime CreateDate { get; set; }
         public bool IsReported { get; set; }
         public User User { get; set; }
+        public Thread Thread { get; set; }
         public List<PostReaction> PostReactions { get; set; }
         public List<Reply> Replies { get; set; }
 

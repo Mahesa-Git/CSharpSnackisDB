@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSharpSnackisDB.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20210524141725_v1.0")]
-    partial class v10
+    [Migration("20210525140134_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -74,9 +74,6 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<string>("BodyText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CategoryID")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -93,8 +90,6 @@ namespace CSharpSnackisDB.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("PostID");
-
-                    b.HasIndex("CategoryID");
 
                     b.HasIndex("ThreadID");
 
@@ -137,9 +132,6 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<string>("BodyText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CategoryID")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -156,8 +148,6 @@ namespace CSharpSnackisDB.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ReplyID");
-
-                    b.HasIndex("CategoryID");
 
                     b.HasIndex("GroupChatID");
 
@@ -305,17 +295,17 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f56ad6d5-ece2-4802-8cef-b24aee22426f",
-                            CreateDate = new DateTime(2021, 5, 24, 16, 17, 24, 664, DateTimeKind.Local).AddTicks(544),
+                            ConcurrencyStamp = "7ab3c318-5334-40c4-a05f-f067e1112c45",
+                            CreateDate = new DateTime(2021, 5, 25, 16, 1, 34, 142, DateTimeKind.Local).AddTicks(2130),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEBNFFoij5oM48N9ZmJn0GzRt7TkxOqEjTuWVDYBkMuLCkLnat0TIVfR0awJZvRuGPA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAECxcQU5sxuC0dga+N5a5JgJyZW7bkkPKKfp2cqKcGowEN1ha2DATi++NZGwn5LfE+w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c788024a-9239-439c-ba71-67c1cd634d6f",
+                            SecurityStamp = "2a52cfd5-e7d6-4b14-9382-14bbeeb74548",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -366,14 +356,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "4ea49ad0-c976-43be-9c5a-48a79e035fed",
+                            ConcurrencyStamp = "c2bde3cd-5894-4bc3-ad8b-4b841d21afe9",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "dd68a650-7410-42a4-8e53-875a95378c61",
+                            ConcurrencyStamp = "8166288c-f0fa-43fd-9469-691199e08de9",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -496,11 +486,7 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Post", b =>
                 {
-                    b.HasOne("CSharpSnackisDB.Entities.Category", "Category")
-                        .WithMany("Posts")
-                        .HasForeignKey("CategoryID");
-
-                    b.HasOne("CSharpSnackisDB.Entities.Thread", null)
+                    b.HasOne("CSharpSnackisDB.Entities.Thread", "Thread")
                         .WithMany("Posts")
                         .HasForeignKey("ThreadID");
 
@@ -508,7 +494,7 @@ namespace CSharpSnackisDB.Migrations
                         .WithMany("Posts")
                         .HasForeignKey("UserId");
 
-                    b.Navigation("Category");
+                    b.Navigation("Thread");
 
                     b.Navigation("User");
                 });
@@ -530,10 +516,6 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Reply", b =>
                 {
-                    b.HasOne("CSharpSnackisDB.Entities.Category", "Category")
-                        .WithMany("Replies")
-                        .HasForeignKey("CategoryID");
-
                     b.HasOne("CSharpSnackisDB.Entities.GroupChat", "GroupChat")
                         .WithMany("Replies")
                         .HasForeignKey("GroupChatID");
@@ -545,8 +527,6 @@ namespace CSharpSnackisDB.Migrations
                     b.HasOne("CSharpSnackisDB.Entities.User", "User")
                         .WithMany("Replies")
                         .HasForeignKey("UserId");
-
-                    b.Navigation("Category");
 
                     b.Navigation("GroupChat");
 
@@ -647,10 +627,6 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Category", b =>
                 {
-                    b.Navigation("Posts");
-
-                    b.Navigation("Replies");
-
                     b.Navigation("Topics");
                 });
 

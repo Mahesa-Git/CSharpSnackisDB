@@ -31,7 +31,7 @@ namespace CSharpSnackisDB.Controllers
             _userManager = userManager;
         }
 
-        #region ADMIN REGISTER/DELETE
+        #region ADMIN REGISTER/DELETE REGION
         [HttpPost("adminregister")]
         public async Task<ActionResult> AdminRegister([FromBody] RegisterAdminModel model)
         {
@@ -113,7 +113,7 @@ namespace CSharpSnackisDB.Controllers
         }
         #endregion
 
-        #region BAN/UNBAN/EDIT USER
+        #region BAN/UNBAN/EDIT USER REGION
         [HttpPut("banuser")]
         public async Task<ActionResult> BanUser([FromBody] string userID)
         {

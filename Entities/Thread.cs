@@ -18,6 +18,13 @@ namespace CSharpSnackisDB.Entities
         public Thread()
         {
             ThreadID = Guid.NewGuid().ToString();
+            CreateDate = DateTime.Now;
         }
+    }
+    public class ThreadResponseModel
+    {
+        public string Title { get; set; }
+        public string BodyText { get; set; }
+        public string TopicId { get; set; }
     }
 }
