@@ -24,15 +24,14 @@ namespace CSharpSnackisDB.Controllers
 
         private Context _context;
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
 
-        public AdminAuthController(Context context, UserManager<User> userManager, SignInManager<User> signInManager)
+        public AdminAuthController(Context context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
+        #region ADMIN REGISTER/DELETE
         [HttpPost("adminregister")]
         public async Task<ActionResult> AdminRegister([FromBody] RegisterAdminModel model)
         {
@@ -112,6 +111,9 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
             }
         }
+        #endregion
+
+        #region BAN/UNBAN/EDIT USER
         [HttpPut("banuser")]
         public async Task<ActionResult> BanUser([FromBody] string userID)
         {
@@ -129,6 +131,8 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
         [HttpPut("unbanuser")]
+        
+
         public async Task<ActionResult> UnBanUser([FromBody] string userID)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
@@ -175,6 +179,6 @@ namespace CSharpSnackisDB.Controllers
             else
                 return Unauthorized();
         }
-            
+        #endregion
     }
 }

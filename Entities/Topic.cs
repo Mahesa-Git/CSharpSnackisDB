@@ -16,6 +16,11 @@ namespace CSharpSnackisDB.Entities
         public Topic()
         {
             TopicID = Guid.NewGuid().ToString();
+            CreateDate = DateTime.Now;
         }
+    }
+    public class TopicResponsemodel
+    {
+        public string Title { get; set; }
     }
 }

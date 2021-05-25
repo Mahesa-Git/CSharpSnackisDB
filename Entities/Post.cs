@@ -14,12 +14,18 @@ namespace CSharpSnackisDB.Entities
         public bool IsReported { get; set; }
         public User User { get; set; }
         public List<PostReaction> PostReactions { get; set; }
-        public Category Category { get; set; }
         public List<Reply> Replies { get; set; }
 
         public Post()
         {
             PostID = Guid.NewGuid().ToString();
+            CreateDate = DateTime.Now;
         }
+    }
+    public class PostResponseModel
+    {
+        public string Title { get; set; }
+        public string BodyText { get; set; }
+        public string ThreadId { get; set; }
     }
 }

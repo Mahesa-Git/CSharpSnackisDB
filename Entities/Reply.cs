@@ -13,12 +13,17 @@ namespace CSharpSnackisDB.Entities
         public bool IsReported { get; set; }
         public User User { get; set; }
         public Post Post { get; set; }
-        public Category Category { get; set; }
         public GroupChat GroupChat { get; set; }
 
         public Reply()
         {
             ReplyID = Guid.NewGuid().ToString();
+            CreateDate = DateTime.Now;
+        }
+        public class ReplyResponseModel
+        {
+            public string PostId { get; set; }
+            public string BodyText { get; set; }
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -26,6 +27,8 @@ namespace CSharpSnackisDB.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+        #region CATEGORIES CRUD
         [HttpGet("GetStatistics")]
         public async Task<ActionResult> GetStatistics()
         {
@@ -46,15 +49,21 @@ namespace CSharpSnackisDB.Controllers
             else
                 return Unauthorized();
         }
+
         [HttpPost("CreateCategory")]
-        public async Task<ActionResult> CreateCategories([FromBody] Category newCategory)
+        public async Task<ActionResult> CreateCategories([FromBody] CategoryResponseModel newCategory)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
             if (roles.Contains("root") || roles.Contains("admin"))
             {
-                await _context.Categories.AddAsync(newCategory);
+                var category = new Category
+                {
+                    Title = newCategory.Title,
+                    Description = newCategory.Description
+                };
+                await _context.Categories.AddAsync(category);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -70,10 +79,27 @@ namespace CSharpSnackisDB.Controllers
 
             if (roles.Contains("root") || roles.Contains("admin"))
             {
-                var result = _context.Categories.Where(x => x.CategoryID == id).FirstOrDefault();
+                var category = _context.Categories.Where(x => x.CategoryID == id).FirstOrDefault();
+                var topics = category.Topics;
 
-                _context.Remove(result);
+                foreach (var topic in topics)
+                {
+                    foreach (var thread in topic.Threads)
+                    {
+                        foreach (var post in thread.Posts)
+                        {
+                            foreach (var reply in post.Replies)
+                            {
+                                _context.Remove(reply);
+                            }
+                            _context.Remove(post);
+                        }
+                        _context.Remove(thread);
+                    }
+                    _context.Remove(topic);
+                }
 
+                _context.Remove(category);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -81,18 +107,18 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
         [HttpPut("UpdateCategory/{id}")]
-        public async Task<ActionResult> UpdateCategory([FromBody] Category category, string id)
+        public async Task<ActionResult> UpdateCategory([FromBody] CategoryResponseModel updateCategory, string id)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
             if (roles.Contains("root") || roles.Contains("admin"))
             {
-                var updateCategory = _context.Categories.Where(x => x.CategoryID == id).FirstOrDefault();
+                var category = _context.Categories.Where(x => x.CategoryID == id).FirstOrDefault();
 
-                updateCategory.Title = category.Title;
-                updateCategory.Description = category.Description;
-                updateCategory.CreateDate = category.CreateDate;
+                category.Title = updateCategory.Title;
+                category.Description = updateCategory.Description;
+                category.CreateDate = DateTime.Now;
 
                 _context.Update(updateCategory);
                 await _context.SaveChangesAsync();
@@ -101,23 +127,25 @@ namespace CSharpSnackisDB.Controllers
             else
                 return Unauthorized();
         }
-        [AllowAnonymous]
-        [HttpGet("ReadCategory")]
-        public async Task<ActionResult> ReadCategory()
-        {
-            var allCategories = await _context.Categories.ToListAsync();
-            return Ok(allCategories);
-        }
+        #endregion
 
+        #region TOPICS CRUD
         [HttpPost("CreateTopic")]
-        public async Task<ActionResult> CreateTopics([FromBody] Topic newTopic)
+        public async Task<ActionResult> CreateTopics([FromBody] TopicResponseModel newTopic)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
             if (roles.Contains("root") || roles.Contains("admin"))
             {
-                await _context.Topics.AddAsync(newTopic);
+                var category = _context.Categories.Where(x => x.CategoryID == newTopic.CategoryId).FirstOrDefault();
+                var topic = new Topic
+                {
+                    Title = newTopic.Title,
+                    Category = category
+                };
+
+                await _context.Topics.AddAsync(topic);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -133,9 +161,21 @@ namespace CSharpSnackisDB.Controllers
 
             if (roles.Contains("root") || roles.Contains("admin"))
             {
-                var result = _context.Topics.Where(x => x.TopicID == id).FirstOrDefault();
-
-                _context.Remove(result);
+                var topic = _context.Topics.Where(x => x.TopicID == id).FirstOrDefault();
+                var threads = topic.Threads;
+                foreach (var thread in threads)
+                {
+                    foreach (var post in thread.Posts)
+                    {
+                        foreach (var reply in post.Replies)
+                        {
+                            _context.Remove(reply);
+                        }
+                        _context.Remove(post);
+                    }
+                    _context.Remove(thread);
+                }
+                _context.Remove(topic);
 
                 await _context.SaveChangesAsync();
                 return Ok();
@@ -144,54 +184,24 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-        [HttpPut("UpdateTopic/{id}")]
-        public async Task<ActionResult> UpdateTopic([FromBody] Topic topics, string id)
+        [HttpPut("UpdateTopic/{TopicId}")]
+        public async Task<ActionResult> UpdateTopic([FromBody] Topic inputTopic, Category categoryToChange)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
             if (roles.Contains("root") || roles.Contains("admin"))
             {
-                var updateTopic = _context.Topics.Where(x => x.TopicID == id).FirstOrDefault();
+                var topic = inputTopic;
+                topic.Category = categoryToChange;
 
-                updateTopic.Title = topics.Title;
-                updateTopic.Category = topics.Category;
-                updateTopic.CreateDate = topics.CreateDate;
-
-                _context.Update(updateTopic);
+                _context.Update(topic);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
             else
                 return Unauthorized();
         }
-
-        [AllowAnonymous]
-        [HttpGet("ReadTopic")]
-        public async Task<ActionResult> ReadTopics()
-        {
-            var allTopics = await _context.Topics.ToListAsync();
-            return Ok(allTopics);
-        }
-
-
-        [HttpDelete("DeletePost/{id}")]
-        public async Task<ActionResult> DeletePosts([FromRoute] string id)
-        {
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            var roles = await _userManager.GetRolesAsync(user);
-
-            if (roles.Contains("root") || roles.Contains("admin"))
-            {
-                var result = _context.Posts.Where(x => x.PostID == id).FirstOrDefault();
-
-                _context.Remove(result);
-
-                await _context.SaveChangesAsync();
-                return Ok();
-            }
-            else
-                return Unauthorized();
-        }
+        #endregion
     }
 }
