@@ -110,10 +110,12 @@ namespace CSharpSnackisDB.Controllers
             User newUser = new User()
             {
                 UserName = model.Username,
+                NormalizedUserName = model.Username.ToUpper(),
                 Email = model.Email,
+                NormalizedEmail = model.Email.ToUpper(),
                 Country = model.Country,
                 MailToken = null,
-                EmailConfirmed = false,
+                EmailConfirmed = true, //ÄNDRA SEN NÄR DEPLOY MAILAUTH
                 ProfileText = model.ProfileText
 
             };
@@ -137,24 +139,25 @@ namespace CSharpSnackisDB.Controllers
 
             if (result.Succeeded)
             {
-                User user = await _userManager.FindByNameAsync(newUser.UserName);
+                //User user = await _userManager.FindByNameAsync(newUser.UserName);
 
                 await _userManager.AddToRoleAsync(newUser, "User");
 
-                var userId = await _userManager.GetUserIdAsync(newUser);
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                //var userId = await _userManager.GetUserIdAsync(newUser);
+                //var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
 
-                user.MailToken = token;
+                //user.MailToken = token;
                 await _context.SaveChangesAsync();
 
-                var urlContent = Url.Content($"https://{ApiKey}/userauth/Mailauthentication/{userId}");
-                var link = Url.Content($"https://{FeKey}/index"); 
+                //var urlContent = Url.Content($"https://{ApiKey}/userauth/Mailauthentication/{userId}");
+                //var link = Url.Content($"https://{FeKey}/index"); 
 
-                await _sender.SendEmailAsync(newUser.Email, "Bekräfta din e-post genom att klicka på länken", "<p>Klicka här för att bekräfta din e-post</p>" + urlContent +
-                                                            "</br></br><p>Fungerar inte länken? Få ett nytt utskick genom att försöka logga in på hemsidan:</br></br>" +
-                                                            $" {link}");
+                //await _sender.SendEmailAsync(newUser.Email, "Bekräfta din e-post genom att klicka på länken", "<p>Klicka här för att bekräfta din e-post</p>" + urlContent +
+                //                                            "</br></br><p>Fungerar inte länken? Få ett nytt utskick genom att försöka logga in på hemsidan:</br></br>" +
+                //                                            $" {link}");
 
-                return Ok(newUser.Id);
+                //return Ok(newUser.Id);
+                return Ok();
             }
             else
             {
