@@ -224,6 +224,7 @@ namespace CSharpSnackisDB.Controllers
             if (user is not null)
             {
                 var post = _context.Posts.Where(x => x.PostID == reply.PostId).FirstOrDefault();
+
                 var newReply = new Reply
                 {
                     User = user,

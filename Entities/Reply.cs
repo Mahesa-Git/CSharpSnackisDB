@@ -24,6 +24,7 @@ namespace CSharpSnackisDB.Entities
         {
             public string PostId { get; set; }
             public string BodyText { get; set; }
+
         }
     }
 }
