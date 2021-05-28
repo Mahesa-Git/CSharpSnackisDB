@@ -92,7 +92,8 @@ namespace CSharpSnackisDB.Controllers
                 };
                 await _context.Threads.AddAsync(newThread);
                 await _context.SaveChangesAsync();
-                return Ok();
+                
+                return Ok(newThread.ThreadID);
             }
             else
                 return Unauthorized();
