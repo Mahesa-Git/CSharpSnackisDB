@@ -41,7 +41,7 @@ namespace CSharpSnackisDB.Controllers
         [HttpGet("ReadTopicsInCategory/{categoryId}")]
         public async Task<ActionResult> ReadTopicsInCategory(string categoryID)
         {
-            var category = _context.Categories.Where(x => x.CategoryID == categoryID).FirstOrDefault();
+            var category = await _context.Categories.Where(x => x.CategoryID == categoryID).FirstAsync();
             var allTopics = await _context.Topics.Where(x => x.Category == category).ToListAsync();
             return Ok(allTopics);
         }
@@ -50,7 +50,7 @@ namespace CSharpSnackisDB.Controllers
         [HttpGet("ReadThreadsInTopic/{TopicId}")]
         public async Task<ActionResult> ReadThreadsInTopics(string topicID)
         {
-            var topic = _context.Topics.Where(x => x.TopicID == topicID).FirstOrDefault();
+            var topic = await _context.Topics.Where(x => x.TopicID == topicID).FirstAsync();
             var allThreads = await _context.Threads.Where(x => x.Topic == topic).ToListAsync();
             return Ok(allThreads);
         }
@@ -59,8 +59,15 @@ namespace CSharpSnackisDB.Controllers
         [HttpGet("ReadPostsInThread/{ThreadId}")]
         public async Task<ActionResult> ReadPostsInThread(string threadID)
         {
-            var thread = _context.Threads.Where(x => x.ThreadID == threadID).FirstOrDefault();
+            var thread = await _context.Threads.Where(x => x.ThreadID == threadID).FirstAsync();
             var allPosts = await _context.Posts.Where(x => x.Thread == thread).ToListAsync();
+
+            foreach (var post in allPosts)
+            {
+                var user = await _context.Users.Where(x => x.Id == post.UserId).FirstAsync();
+                post.User = user;
+            }
+            
             return Ok(allPosts);
         }
 
@@ -68,8 +75,15 @@ namespace CSharpSnackisDB.Controllers
         [HttpGet("ReadRepliesToPost/{PostId}")]
         public async Task<ActionResult> ReadRepliesToPost(string postID)
         {
-            var post = _context.Posts.Where(x => x.PostID == postID).FirstOrDefault();
+            var post = await _context.Posts.Where(x => x.PostID == postID).FirstAsync();
             var allReplies = await _context.Replies.Where(x => x.Post == post).ToListAsync();
+
+            foreach (var reply in allReplies)
+            {
+                    var user = await _context.Users.Where(x => x.Id == reply.UserId).FirstAsync();
+                    reply.User = user;
+            }
+
             return Ok(allReplies);
         }
         #endregion
@@ -88,7 +102,9 @@ namespace CSharpSnackisDB.Controllers
                 {
                     Title = thread.Title,
                     BodyText = thread.BodyText,
-                    Topic = topic
+                    Topic = topic,
+                    User = user,
+                    UserId = user.Id
                 };
                 await _context.Threads.AddAsync(newThread);
                 await _context.SaveChangesAsync();
@@ -157,7 +173,9 @@ namespace CSharpSnackisDB.Controllers
                 {
                     Title = post.Title,
                     BodyText = post.BodyText,
-                    Thread = thread
+                    Thread = thread,
+                    User = user,
+                    UserId = user.Id
                 };
 
                 await _context.Posts.AddAsync(newPost);
@@ -227,9 +245,10 @@ namespace CSharpSnackisDB.Controllers
 
                 var newReply = new Reply
                 {
-                    User = user,
                     Post = post,
-                    BodyText = reply.BodyText
+                    BodyText = reply.BodyText,
+                    User = user,
+                    UserId = user.Id
                 };
                 _context.Add(newReply);
                 await _context.SaveChangesAsync();

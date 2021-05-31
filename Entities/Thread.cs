@@ -9,6 +9,7 @@ namespace CSharpSnackisDB.Entities
     {
         public string ThreadID { get; set; }
         public User User { get; set; }
+        public string UserId { get; set; }
         public string Title { get; set; }
         public string BodyText { get; set; }
         public DateTime CreateDate { get; set; }

@@ -11,6 +11,7 @@ namespace CSharpSnackisDB.Entities
         public string BodyText { get; set; }
         public DateTime CreateDate { get; set; }
         public bool IsReported { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }
         public Post Post { get; set; }
         public GroupChat GroupChat { get; set; }

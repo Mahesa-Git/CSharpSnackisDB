@@ -116,7 +116,8 @@ namespace CSharpSnackisDB.Controllers
                 Country = model.Country,
                 MailToken = null,
                 EmailConfirmed = true, //ÄNDRA SEN NÄR DEPLOY MAILAUTH
-                ProfileText = model.ProfileText
+                ProfileText = model.ProfileText,
+                Image = model.Image
 
             };
             if (newUser.UserName.Contains(' '))
