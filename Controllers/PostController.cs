@@ -51,7 +51,7 @@ namespace CSharpSnackisDB.Controllers
         public async Task<ActionResult> ReadThreadsInTopics(string topicID)
         {
             var topic = await _context.Topics.Where(x => x.TopicID == topicID).FirstAsync();
-            var allThreads = await _context.Threads.Where(x => x.Topic == topic).OrderBy(x => x.CreateDate).ToListAsync();
+            var allThreads = await _context.Threads.Where(x => x.Topic == topic).Include(x => x.User).OrderBy(x => x.CreateDate).ToListAsync();
             return Ok(allThreads);
         }
 
