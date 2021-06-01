@@ -78,6 +78,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsThreadStart")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ThreadID")
                         .HasColumnType("nvarchar(450)");
 
@@ -296,17 +299,17 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bc286c41-daa8-4ad7-bab5-50a181e00ad0",
-                            CreateDate = new DateTime(2021, 6, 1, 10, 46, 43, 139, DateTimeKind.Local).AddTicks(4850),
+                            ConcurrencyStamp = "1bd93768-35db-4215-bbf5-04027f378415",
+                            CreateDate = new DateTime(2021, 6, 1, 14, 18, 46, 713, DateTimeKind.Local).AddTicks(172),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJcJ4lCFzsgKlna2Imfk8g3NEzNq9nRLUHxWitnu93Z56gG8loL49weNctGPCupucQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFI00xiQJj4tsRTUDCyld8Gm26P5klm0fnF1AOGnABCkDfiKv0uf+k1maViO2yQANA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "da2dafa5-8b91-4fe0-b6c1-312fddc7fa03",
+                            SecurityStamp = "26f58aa0-5110-490f-a356-0d0487d3455e",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -357,14 +360,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "227b3c78-001d-4ca1-a720-40d23be140c0",
+                            ConcurrencyStamp = "af301e2f-0703-4855-b1a2-308e675a7b63",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "39fa6af1-4a2e-46c1-bee6-0e882db5936e",
+                            ConcurrencyStamp = "c2ed0ca6-f7f4-42c3-9d20-06abfd316d39",
                             Name = "User",
                             NormalizedName = "USER"
                         });

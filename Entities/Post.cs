@@ -13,6 +13,7 @@ namespace CSharpSnackisDB.Entities
         public DateTime CreateDate { get; set; }
         public string UserId { get; set; }
         public bool IsReported { get; set; }
+        public bool IsThreadStart { get; set; }
         public User User { get; set; }
         public Thread Thread { get; set; }
         public List<PostReaction> PostReactions { get; set; }
@@ -29,5 +30,6 @@ namespace CSharpSnackisDB.Entities
         public string Title { get; set; }
         public string BodyText { get; set; }
         public string ThreadId { get; set; }
+        public bool IsThreadStart { get; set; }
     }
 }
