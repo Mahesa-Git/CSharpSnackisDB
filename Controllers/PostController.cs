@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -218,7 +219,7 @@ namespace CSharpSnackisDB.Controllers
 
                 updatePost.Title = post.Title;
                 updatePost.BodyText = post.BodyText;
-                updatePost.CreateDate = post.CreateDate;
+                updatePost.EditDate = DateTime.Now;
 
                 _context.Update(updatePost);
                 await _context.SaveChangesAsync();
@@ -265,7 +266,7 @@ namespace CSharpSnackisDB.Controllers
                 var replyResult = await _context.Replies.Where(x => x.ReplyID == reply.ReplyID).FirstAsync();
 
                 replyResult.BodyText = reply.BodyText;
-                replyResult.CreateDate = reply.CreateDate;
+                replyResult.EditDate = DateTime.Now;
 
                 _context.Update(replyResult);
                 await _context.SaveChangesAsync();

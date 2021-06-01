@@ -10,6 +10,8 @@ namespace CSharpSnackisDB.Entities
         public string ReplyID { get; set; }
         public string BodyText { get; set; }
         public DateTime CreateDate { get; set; }
+
+        public DateTime EditDate { get; set; }
         public bool IsReported { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
