@@ -67,7 +67,7 @@ namespace CSharpSnackisDB.Controllers
         {
             if (IsAdmin().Result == true)
             {
-                var category = _context.Categories.Where(x => x.CategoryID == "392d4fc6-5317-45a6-ac91-063f9b456c99").FirstOrDefault();
+                var category = _context.Categories.Where(x => x.CategoryID == "22fed7b1-3e93-4a4c-bb2a-36f265246713").FirstOrDefault();
                 var topic = new Topic
                 {
                     Title = "Ford Mustang Shelby",
@@ -84,7 +84,7 @@ namespace CSharpSnackisDB.Controllers
                     Category = category
                 };
 
-                var category1 = _context.Categories.Where(x => x.CategoryID == "e4392cb3-b676-49ad-8a4f-0acebf9c01c9").FirstOrDefault();
+                var category1 = _context.Categories.Where(x => x.CategoryID == "5bdabaf8-5679-4265-9228-7ec30b39a987").FirstOrDefault();
                 var topic3 = new Topic
                 {
                     Title = "Triumph Street Triple 675",
@@ -101,7 +101,7 @@ namespace CSharpSnackisDB.Controllers
                     Category = category1
                 };
 
-                var category2 = _context.Categories.Where(x => x.CategoryID == "0226dd5a-d186-405e-95c0-88e044bc918b").FirstOrDefault();
+                var category2 = _context.Categories.Where(x => x.CategoryID == "4ca1b55e-cdcd-4e25-917e-2c3549eaa9b7").FirstOrDefault();
                 var topic6 = new Topic
                 {
                     Title = "Silja Line",
