@@ -159,16 +159,19 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-        [HttpPut("UpdateTopic/{newCategoryId}")]
-        public async Task<ActionResult> UpdateTopic([FromBody] Topic inputTopic, string newCategoryId)
+        [HttpPut("UpdateTopic/{topicId}")]
+        public async Task<ActionResult> UpdateTopic([FromBody] Topic inputTopic, [FromRoute] string topicId)
         {
             if (IsAdmin().Result == true)
             {
-                var newCategory = _context.Categories.Where(x => x.CategoryID == newCategoryId).FirstOrDefault();
-                var topic = inputTopic;
-                topic.Category = newCategory;
+                var newTopicName = await _context.Topics.Where(x => x.TopicID == topicId).FirstAsync();
 
-                _context.Update(topic);
+                newTopicName.Title = inputTopic.Title;
+
+                //var topic = inputTopic;
+                //topic = newTopicName;
+
+                _context.Update(newTopicName);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
