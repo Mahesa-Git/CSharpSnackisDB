@@ -59,7 +59,8 @@ namespace CSharpSnackisDB.Migrations
                     CategoryID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EditDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -203,7 +204,8 @@ namespace CSharpSnackisDB.Migrations
                     TopicID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CategoryID = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EditDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -249,6 +251,7 @@ namespace CSharpSnackisDB.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BodyText = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EditDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsReported = table.Column<bool>(type: "bit", nullable: false),
                     TopicID = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
@@ -277,9 +280,10 @@ namespace CSharpSnackisDB.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BodyText = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    EditDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsReported = table.Column<bool>(type: "bit", nullable: false),
                     IsThreadStart = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ThreadID = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -306,6 +310,7 @@ namespace CSharpSnackisDB.Migrations
                     ReplyID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BodyText = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EditDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsReported = table.Column<bool>(type: "bit", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     PostID = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -364,17 +369,17 @@ namespace CSharpSnackisDB.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "root-0c0-aa65-4af8-bd17-00bd9344e575", "c2c7a58c-f3bf-465b-b319-dedf3bf748db", "root", "ROOT" });
+                values: new object[] { "root-0c0-aa65-4af8-bd17-00bd9344e575", "85d5cc2d-3454-4c27-b6aa-5a8eb2deab41", "root", "ROOT" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "user-2c0-aa65-4af8-bd17-00bd9344e575", "567b2fe3-d247-4687-955b-755e718b95bc", "User", "USER" });
+                values: new object[] { "user-2c0-aa65-4af8-bd17-00bd9344e575", "fb9f336d-888c-4d09-9c67-08ef62f4aa62", "User", "USER" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Country", "CreateDate", "Email", "EmailConfirmed", "Image", "IsBanned", "LockoutEnabled", "LockoutEnd", "MailToken", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfileText", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "admin-c0-aa65-4af8-bd17-00bd9344e575", 0, "f30cd48f-55e4-4a79-b873-45c0601128a7", null, new DateTime(2021, 6, 1, 15, 25, 1, 596, DateTimeKind.Local).AddTicks(9886), "admin@csharpsnackis.api", true, null, false, false, null, null, "ADMIN@csharsnackis.API", "ADMIN", "AQAAAAEAACcQAAAAEMfbJIJPAJ0CWa+TvuPv5Bm8Qia0kNeBETj4SVoPEHYfka6GuYf1o1OSdA7PuRiPiQ==", null, false, null, "4b66c05a-0913-49c0-927f-26f2e775b9e6", false, "admin" });
+                values: new object[] { "admin-c0-aa65-4af8-bd17-00bd9344e575", 0, "661a24b9-233e-4f49-b164-6d8bc65fab3f", null, new DateTime(2021, 6, 2, 9, 54, 11, 0, DateTimeKind.Local).AddTicks(7370), "admin@csharpsnackis.api", true, null, false, false, null, null, "ADMIN@csharsnackis.API", "ADMIN", "AQAAAAEAACcQAAAAEJvsxPrpMrGczAnKKHIeQyFc8RqRZ+zu1yTbD2WfLlLOo1Hw4VZ43h/bXUZahKMBOw==", null, false, null, "0f31dcfe-1cde-4ea7-b268-d45531a5888c", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

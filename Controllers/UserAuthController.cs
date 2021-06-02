@@ -21,7 +21,7 @@ namespace CSharpSnackisDB.Controllers
     public class UserAuthController : ControllerBase
     {
         private const string ApiKey = "localhost:44302";
-        private const string FeKey = "";
+        private const string FeKey = "localhost:44335";
 
         private Context _context;
         private readonly UserManager<User> _userManager;

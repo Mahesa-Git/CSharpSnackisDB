@@ -30,6 +30,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("EditDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -73,6 +76,9 @@ namespace CSharpSnackisDB.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EditDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsReported")
@@ -136,6 +142,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("EditDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("GroupChatID")
                         .HasColumnType("nvarchar(450)");
 
@@ -170,6 +179,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("EditDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
@@ -200,6 +212,9 @@ namespace CSharpSnackisDB.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EditDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
@@ -299,17 +314,17 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f30cd48f-55e4-4a79-b873-45c0601128a7",
-                            CreateDate = new DateTime(2021, 6, 1, 15, 25, 1, 596, DateTimeKind.Local).AddTicks(9886),
+                            ConcurrencyStamp = "661a24b9-233e-4f49-b164-6d8bc65fab3f",
+                            CreateDate = new DateTime(2021, 6, 2, 9, 54, 11, 0, DateTimeKind.Local).AddTicks(7370),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMfbJIJPAJ0CWa+TvuPv5Bm8Qia0kNeBETj4SVoPEHYfka6GuYf1o1OSdA7PuRiPiQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJvsxPrpMrGczAnKKHIeQyFc8RqRZ+zu1yTbD2WfLlLOo1Hw4VZ43h/bXUZahKMBOw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4b66c05a-0913-49c0-927f-26f2e775b9e6",
+                            SecurityStamp = "0f31dcfe-1cde-4ea7-b268-d45531a5888c",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -360,14 +375,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "c2c7a58c-f3bf-465b-b319-dedf3bf748db",
+                            ConcurrencyStamp = "85d5cc2d-3454-4c27-b6aa-5a8eb2deab41",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "567b2fe3-d247-4687-955b-755e718b95bc",
+                            ConcurrencyStamp = "fb9f336d-888c-4d09-9c67-08ef62f4aa62",
                             Name = "User",
                             NormalizedName = "USER"
                         });

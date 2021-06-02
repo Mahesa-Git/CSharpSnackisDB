@@ -12,7 +12,6 @@ namespace CSharpSnackisDB.Entities
         public string BodyText { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime EditDate { get; set; }
-        public string UserId { get; set; }
         public bool IsReported { get; set; }
         public bool IsThreadStart { get; set; }
         public User User { get; set; }
