@@ -13,6 +13,8 @@ namespace CSharpSnackisDB.Entities
         public string Title { get; set; }
         public DateTime CreateDate { get; set; }
 
+        public DateTime EditDate { get; set; }
+
         public Topic()
         {
             TopicID = Guid.NewGuid().ToString();

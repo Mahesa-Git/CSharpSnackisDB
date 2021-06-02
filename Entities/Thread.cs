@@ -12,6 +12,8 @@ namespace CSharpSnackisDB.Entities
         public string Title { get; set; }
         public string BodyText { get; set; }
         public DateTime CreateDate { get; set; }
+
+        public DateTime EditDate { get; set; }
         public bool IsReported { get; set; }
         public Topic Topic { get; set; }
         public List<Post> Posts { get; set; }

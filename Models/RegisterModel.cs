@@ -12,5 +12,6 @@ namespace CSharpSnackisDB.Models
         public string Password { get; set; }
         public string Country { get; set; }
         public string ProfileText { get; set; }
+        public string Image { get; set; }
     }
 }

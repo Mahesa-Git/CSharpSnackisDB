@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSharpSnackisDB.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20210525140134_init")]
+    [Migration("20210602183718_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,6 +31,9 @@ namespace CSharpSnackisDB.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EditDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -77,7 +80,13 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("EditDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsReported")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsThreadStart")
                         .HasColumnType("bit");
 
                     b.Property<string>("ThreadID")
@@ -135,6 +144,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("EditDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("GroupChatID")
                         .HasColumnType("nvarchar(450)");
 
@@ -169,6 +181,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("EditDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
@@ -199,6 +214,9 @@ namespace CSharpSnackisDB.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EditDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
@@ -235,6 +253,9 @@ namespace CSharpSnackisDB.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsBanned")
                         .HasColumnType("bit");
@@ -295,17 +316,17 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7ab3c318-5334-40c4-a05f-f067e1112c45",
-                            CreateDate = new DateTime(2021, 5, 25, 16, 1, 34, 142, DateTimeKind.Local).AddTicks(2130),
+                            ConcurrencyStamp = "e5315841-c908-4cb2-a520-a5b5b886bc14",
+                            CreateDate = new DateTime(2021, 6, 2, 20, 37, 17, 834, DateTimeKind.Local).AddTicks(334),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAECxcQU5sxuC0dga+N5a5JgJyZW7bkkPKKfp2cqKcGowEN1ha2DATi++NZGwn5LfE+w==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPCeGHXUTvdca2NdfetBm3XMJ0kvbsn8gvg0HjKCrkgiyf7pYeqz2Nd9THeJrvmgHQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2a52cfd5-e7d6-4b14-9382-14bbeeb74548",
+                            SecurityStamp = "0a73ca50-ec98-4cee-9b71-ae0a862e2910",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -356,14 +377,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "c2bde3cd-5894-4bc3-ad8b-4b841d21afe9",
+                            ConcurrencyStamp = "b351f3c6-d1de-4d0d-a420-ab2848e9595f",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "8166288c-f0fa-43fd-9469-691199e08de9",
+                            ConcurrencyStamp = "f627599e-0499-48bf-b124-09514b98ba19",
                             Name = "User",
                             NormalizedName = "USER"
                         });

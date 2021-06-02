@@ -17,7 +17,7 @@ namespace CSharpSnackisDB.Controllers
     public class AdminPostController : ControllerBase
     {
         private const string ApiKey = "localhost:44302";
-        private const string FeKey = "";
+        private const string FeKey = "localhost:44335";
 
         private Context _context;
         private readonly UserManager<User> _userManager;
@@ -79,27 +79,18 @@ namespace CSharpSnackisDB.Controllers
         {
             if (IsAdmin().Result == true)
             {
-                var category = _context.Categories.Where(x => x.CategoryID == id).FirstOrDefault();
-                var topics = category.Topics;
-
-                foreach (var topic in topics)
+                var category = await _context.Categories.Where(x => x.CategoryID == id).Include(x => x.Topics).FirstAsync();
+                foreach (var topic in category.Topics)
                 {
+                    topic.Threads = await _context.Threads.Where(x => x.Topic.TopicID == topic.TopicID).Include(x => x.Posts).ToListAsync();
+
                     foreach (var thread in topic.Threads)
                     {
-                        foreach (var post in thread.Posts)
-                        {
-                            foreach (var reply in post.Replies)
-                            {
-                                _context.Remove(reply);
-                            }
-                            _context.Remove(post);
-                        }
-                        _context.Remove(thread);
+                        thread.Posts = await _context.Posts.Where(x => x.Thread.ThreadID == thread.ThreadID).Include(x => x.Replies).ToListAsync();
                     }
-                    _context.Remove(topic);
                 }
 
-                _context.Remove(category);
+                _context.RemoveRange(category);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -153,22 +144,14 @@ namespace CSharpSnackisDB.Controllers
         {
             if (IsAdmin().Result == true)
             {
-                var topic = _context.Topics.Where(x => x.TopicID == id).FirstOrDefault();
-                var threads = topic.Threads;
-                foreach (var thread in threads)
-                {
-                    foreach (var post in thread.Posts)
-                    {
-                        foreach (var reply in post.Replies)
-                        {
-                            _context.Remove(reply);
-                        }
-                        _context.Remove(post);
-                    }
-                    _context.Remove(thread);
-                }
-                _context.Remove(topic);
+                var topic = await _context.Topics.Where(x => x.TopicID == id).Include(x => x.Threads).FirstAsync();
 
+                foreach (var thread in topic.Threads)
+                {
+                    thread.Posts = await _context.Posts.Where(x => x.Thread.ThreadID == thread.ThreadID).Include(x => x.Replies).ToListAsync();
+
+                }
+                _context.RemoveRange(topic);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -176,16 +159,19 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-        [HttpPut("UpdateTopic/{newCategoryId}")]
-        public async Task<ActionResult> UpdateTopic([FromBody] Topic inputTopic, string newCategoryId)
+        [HttpPut("UpdateTopic/{topicId}")]
+        public async Task<ActionResult> UpdateTopic([FromBody] Topic inputTopic, [FromRoute] string topicId)
         {
             if (IsAdmin().Result == true)
             {
-                var newCategory = _context.Categories.Where(x => x.CategoryID == newCategoryId).FirstOrDefault();
-                var topic = inputTopic;
-                topic.Category = newCategory;
+                var newTopicName = await _context.Topics.Where(x => x.TopicID == topicId).FirstAsync();
 
-                _context.Update(topic);
+                newTopicName.Title = inputTopic.Title;
+
+                //var topic = inputTopic;
+                //topic = newTopicName;
+
+                _context.Update(newTopicName);
                 await _context.SaveChangesAsync();
                 return Ok();
             }

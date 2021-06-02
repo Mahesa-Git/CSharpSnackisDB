@@ -21,7 +21,7 @@ namespace CSharpSnackisDB.Controllers
     public class UserAuthController : ControllerBase
     {
         private const string ApiKey = "localhost:44302";
-        private const string FeKey = "";
+        private const string FeKey = "localhost:44335";
 
         private Context _context;
         private readonly UserManager<User> _userManager;
@@ -37,6 +37,20 @@ namespace CSharpSnackisDB.Controllers
         }
 
         #region LOGIN/REGISTER/MAILAUTHENTICATION REGION
+
+        private bool MailChecker(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginModel model)
@@ -96,11 +110,14 @@ namespace CSharpSnackisDB.Controllers
             User newUser = new User()
             {
                 UserName = model.Username,
+                NormalizedUserName = model.Username.ToUpper(),
                 Email = model.Email,
+                NormalizedEmail = model.Email.ToUpper(),
                 Country = model.Country,
                 MailToken = null,
-                EmailConfirmed = false,
-                ProfileText = model.ProfileText
+                EmailConfirmed = true, //ÄNDRA SEN NÄR DEPLOY MAILAUTH
+                ProfileText = model.ProfileText,
+                Image = model.Image
 
             };
             if (newUser.UserName.Contains(' '))
@@ -113,6 +130,9 @@ namespace CSharpSnackisDB.Controllers
             if (UserCheck != null)
                 return BadRequest("Username in use");
 
+            if (!MailChecker(model.Email))
+                return BadRequest("wrong email format");
+
             if (UserMailCheck != null)
                 return BadRequest("E-mail in use");
 
@@ -120,24 +140,25 @@ namespace CSharpSnackisDB.Controllers
 
             if (result.Succeeded)
             {
-                User user = await _userManager.FindByNameAsync(newUser.UserName);
+                //User user = await _userManager.FindByNameAsync(newUser.UserName);
 
                 await _userManager.AddToRoleAsync(newUser, "User");
 
-                var userId = await _userManager.GetUserIdAsync(newUser);
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                //var userId = await _userManager.GetUserIdAsync(newUser);
+                //var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
 
-                user.MailToken = token;
+                //user.MailToken = token;
                 await _context.SaveChangesAsync();
 
-                var urlContent = Url.Content($"https://{ApiKey}/userauth/Mailauthentication/{userId}");
-                var link = Url.Content($"https://{FeKey}/index"); 
+                //var urlContent = Url.Content($"https://{ApiKey}/userauth/Mailauthentication/{userId}");
+                //var link = Url.Content($"https://{FeKey}/index"); 
 
-                await _sender.SendEmailAsync(newUser.Email, "Bekräfta din e-post genom att klicka på länken", "<p>Klicka här för att bekräfta din e-post</p>" + urlContent +
-                                                            "</br></br><p>Fungerar inte länken? Få ett nytt utskick genom att försöka logga in på hemsidan:</br></br>" +
-                                                            $" {link}");
+                //await _sender.SendEmailAsync(newUser.Email, "Bekräfta din e-post genom att klicka på länken", "<p>Klicka här för att bekräfta din e-post</p>" + urlContent +
+                //                                            "</br></br><p>Fungerar inte länken? Få ett nytt utskick genom att försöka logga in på hemsidan:</br></br>" +
+                //                                            $" {link}");
 
-                return Ok(newUser.Id);
+                //return Ok(newUser.Id);
+                return Ok();
             }
             else
             {

@@ -10,6 +10,7 @@ namespace CSharpSnackisDB.Entities
         public string ReplyID { get; set; }
         public string BodyText { get; set; }
         public DateTime CreateDate { get; set; }
+        public DateTime EditDate { get; set; }
         public bool IsReported { get; set; }
         public User User { get; set; }
         public Post Post { get; set; }
@@ -24,6 +25,7 @@ namespace CSharpSnackisDB.Entities
         {
             public string PostId { get; set; }
             public string BodyText { get; set; }
+
         }
     }
 }
