@@ -15,6 +15,13 @@ namespace CSharpSnackisDB.Entities
         public GroupChat()
         {
             GroupChatID = Guid.NewGuid().ToString();
+            CreateDate = DateTime.Now;
         }
+    }
+    public class NewChatModel
+    {
+        public string GroupChatID { get; set; }
+        public string RecipantID { get; set; }
+
     }
 }
