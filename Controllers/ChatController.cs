@@ -51,7 +51,14 @@ namespace CSharpSnackisDB.Controllers
             if (user is not null)
             {
                 var chatList = await _context.GroupChats.Include(x => x.Users).Include(x => x.Replies.OrderBy(x => x.CreateDate)).Where(x => x.Users.Contains(user)).ToListAsync();
-                //Lägg in kontroll för chats med 0 eller 1 user (om usern deletad) och ta bort chatsen.
+                foreach (var chat in chatList)
+                {
+                    if(chat.Users.Count < 2)
+                    {
+                        _context.GroupChats.Remove(chat);
+                        await _context.SaveChangesAsync();
+                    }
+                }
                 return Ok(chatList);
             }
             else
@@ -61,26 +68,43 @@ namespace CSharpSnackisDB.Controllers
         }
 
         [HttpPost("NewChat")]
-        public async Task<ActionResult> ReadCategories([FromBody] NewChatModel newChat)
+        public async Task<ActionResult> ReadCategories([FromBody] List<string> newChat)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
 
             if (user is not null)
             {
-                var recipantUser = await _context.Users.Where(x => x.Id == newChat.RecipantID).FirstAsync();
+                var users = new List<User>();
+                users.Add(user);
+                foreach (var recipantID in newChat)
+                {
+                    var recipantUsers = await _context.Users.Where(x => x.Id == recipantID).FirstAsync();
+                    users.Add(recipantUsers);
+                }
                 try
                 {
-                    var chatExist = await _context.GroupChats
-                        .Include(x => x.Users)
-                        .Where(x => x.Users
-                        .Contains(user) && x.Users.Contains(recipantUser))
-                        .FirstAsync();
+                    var allChatsWithUser = await _context.GroupChats.Include(x => x.Users).Where(x => x.Users.Contains(user)).ToListAsync();
 
-                    return BadRequest();
+                    if(allChatsWithUser.Count > 0)
+                    {
+                        foreach (var groupChat in allChatsWithUser)
+                        {
+                            if (users.All(groupChat.Users.Contains))
+                            {
+                                return BadRequest();
+                            }
+                        }
+                    }
+                    var chat = new GroupChat()
+                    {
+                        Users = users
+                    };
+                    await _context.GroupChats.AddAsync(chat);
+                    await _context.SaveChangesAsync();
+                    return Ok();
                 }
                 catch (System.Exception)
                 {
-                    var users = new List<User>() { user, recipantUser };
                     var chat = new GroupChat()
                     {
                         Users = users

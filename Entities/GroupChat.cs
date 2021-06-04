@@ -20,8 +20,6 @@ namespace CSharpSnackisDB.Entities
     }
     public class NewChatModel
     {
-        public string GroupChatID { get; set; }
-        public string RecipantID { get; set; }
-
+        public List<string> RecipantIDs { get; set; }
     }
 }
