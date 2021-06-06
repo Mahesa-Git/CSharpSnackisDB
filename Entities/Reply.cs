@@ -27,5 +27,10 @@ namespace CSharpSnackisDB.Entities
             public string BodyText { get; set; }
 
         }
+        public class ReplyToChatModel
+        {
+            public string GroupChatID { get; set; }
+            public string BodyText { get; set; }
+        }
     }
 }

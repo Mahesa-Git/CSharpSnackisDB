@@ -290,9 +290,5 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
         #endregion
-
-        #region GROUPCHAT REGION
-
-        #endregion
     }
 }
