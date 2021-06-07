@@ -68,6 +68,8 @@ namespace CSharpSnackisDB.Controllers
                         return BadRequest($"{user.Id}");
                     }
                 }
+                if (user.IsBanned == true)
+                    return Ok("banned");
                 if (signInResult.Succeeded)
                 {
                     var tokenHandler = new JwtSecurityTokenHandler();

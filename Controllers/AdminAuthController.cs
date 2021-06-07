@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -191,11 +190,56 @@ namespace CSharpSnackisDB.Controllers
 
                     return BadRequest();
                 }
-                
+
             }
             else
                 return Unauthorized();
         }
+
+        [HttpPost("ReviewDone")]
+        public async Task<ActionResult> ReviewDone([FromBody] ReviewDoneModel reviewDoneModel)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("root") || roles.Contains("admin"))
+            {
+                switch (reviewDoneModel.Type)
+                {
+                    case "Post":
+                        var q1 = await _context.Posts.Where(x => x.PostID == reviewDoneModel.TextID).FirstAsync();
+                        q1.IsReported = false;
+                        _context.Update(q1);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case "Thread":
+                        var q2 = await _context.Threads.Where(x => x.ThreadID == reviewDoneModel.TextID).FirstAsync();
+                        q2.IsReported = false;
+                        _context.Update(q2);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case "Reply":
+                        var q3 = await _context.Replies.Where(x => x.ReplyID == reviewDoneModel.TextID).FirstAsync();
+                        q3.IsReported = false;
+                        _context.Update(q3);
+                        await _context.SaveChangesAsync();
+                        break;
+                    case "User":
+                        var q4 = await _context.Users.Where(x => x.Id == reviewDoneModel.TextID).FirstAsync();
+                        q4.IsReported = false;
+                        _context.Update(q4);
+                        await _context.SaveChangesAsync();
+                        break;
+                }
+                return Ok();
+            }
+            else
+            {
+                return Unauthorized();
+            }
+
+        }
+
         #endregion
     }
 }
