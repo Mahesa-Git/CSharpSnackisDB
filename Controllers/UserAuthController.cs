@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -236,11 +237,11 @@ namespace CSharpSnackisDB.Controllers
         [HttpPut("userupdate")]
         public async Task<ActionResult> UserUpdate([FromBody] RegisterModel model)
         {
-            var UserCheck = await _userManager.FindByNameAsync(model.Username);
-            var UserMailCheck = await _userManager.FindByEmailAsync(model.Email);
-
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             User userEmail = await _userManager.FindByEmailAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Email)).Value);
+
+            var UserCheck = await _userManager.FindByNameAsync(user.UserName);
+            var UserMailCheck = await _userManager.FindByEmailAsync(userEmail.Email);
 
             bool sameEmail = user.Email == model.Email ? true : false;
             bool sameUsername = user.UserName == model.Username ? true : false;
@@ -294,6 +295,28 @@ namespace CSharpSnackisDB.Controllers
             }
         }
 
+        [HttpPut("userProfileTextUpdate")]
+        public async Task<ActionResult> UserProfileTextUpdate([FromBody] RegisterModel model)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+
+            var UserCheck = await _userManager.FindByNameAsync(user.UserName);
+
+            if (user is not null)
+            {
+                
+                user.ProfileText = model.ProfileText;
+
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Error, user not found");
+            }
+        }
+
         [HttpPost("changepassword")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordModel model)
         {
@@ -331,14 +354,11 @@ namespace CSharpSnackisDB.Controllers
         {
             User user = await _userManager.FindByIdAsync(Id);
 
-            if (user != null)
+            if (user is not null)
             {
                 return Ok(user);
             }
-            else
-            {
-                return StatusCode(404, new { message = "User does not exist" });
-            }
+            return Unauthorized();
         }
         #endregion
     }
