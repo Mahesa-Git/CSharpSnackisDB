@@ -12,6 +12,7 @@ namespace CSharpSnackisDB.Entities
         public string MailToken { get; set; }
         public DateTime CreateDate { get; set; }
         public string ProfileText { get; set; }
+        public bool IsReported { get; set; }
         public bool IsBanned { get; set; }
         public string Image { get; set; }
         public List<Post> Posts { get; set; }
