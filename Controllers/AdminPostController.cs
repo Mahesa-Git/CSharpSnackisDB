@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -44,13 +45,41 @@ namespace CSharpSnackisDB.Controllers
             if (IsAdmin().Result == true)
             {
                 var posts = await _context.Posts.CountAsync();
+                var replies = await _context.Replies.CountAsync();
                 var threads = await _context.Threads.CountAsync();
-                var categories = await _context.Categories.CountAsync();
                 var users = await _context.Users.CountAsync();
 
-                int[] returnArr = new int[] { posts, threads, categories, users };
+                var reportedUsers = await _context.Users.Where(x => x.IsReported == true).CountAsync();
+                var reportedPosts = await _context.Posts.Where(x => x.IsReported == true).CountAsync();
+                var reportedReplies = await _context.Replies.Where(x => x.IsReported == true).CountAsync();
+                var reportedThreads = await _context.Threads.Where(x => x.IsReported == true).CountAsync();
+                var totalReports = reportedUsers + reportedPosts + reportedReplies + reportedThreads;
+
+                int[] returnArr = new int[] { users, posts + replies, threads, totalReports };
 
                 return Ok(returnArr);
+            }
+            else
+                return Unauthorized();
+        }
+
+        [HttpGet("GetReportedObjects")]
+        public async Task<ActionResult> GetReportedObjects()
+        {
+            if (IsAdmin().Result == true)
+            {
+                var reportedUsers = await _context.Users.Where(x => x.IsReported == true).ToListAsync();
+                var reportedPosts = await _context.Posts.Where(x => x.IsReported == true).Include(x => x.Thread).ToListAsync();
+                var reportedReplies = await _context.Replies.Where(x => x.IsReported == true).Include(x => x.Post).ThenInclude(x => x.Thread).ToListAsync();
+                var reportedThreads = await _context.Threads.Where(x => x.IsReported == true).Include(x => x.Topic).ToListAsync();
+                var returnValues = new List<object>
+                {
+                    reportedUsers,
+                    reportedPosts,
+                    reportedReplies,
+                    reportedThreads
+                };
+                return Ok(returnValues);
             }
             else
                 return Unauthorized();

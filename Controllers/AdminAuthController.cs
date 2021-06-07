@@ -4,6 +4,7 @@ using CSharpSnackisDB.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,9 +114,27 @@ namespace CSharpSnackisDB.Controllers
         }
         #endregion
 
-        #region BAN/UNBAN/EDIT USER REGION
-        [HttpPut("banuser")]
-        public async Task<ActionResult> BanUser([FromBody] string userID)
+        #region BAN/UNBAN/EDIT/GET USER REGION
+        [HttpGet("GetUsers")]
+        public async Task<IActionResult> GetUsers()
+        {
+
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("root") || roles.Contains("admin"))
+            {
+                var users = await _context.Users.ToListAsync();
+                users.Remove(user);
+                return Ok(users);
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
+        [HttpGet("BanUser/{userID}")]
+        public async Task<ActionResult> BanUser([FromRoute] string userID)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
@@ -130,10 +149,8 @@ namespace CSharpSnackisDB.Controllers
             else
                 return Unauthorized();
         }
-        [HttpPut("unbanuser")]
-        
-
-        public async Task<ActionResult> UnBanUser([FromBody] string userID)
+        [HttpGet("UnbanUser/{userID}")]
+        public async Task<ActionResult> UnBanUser([FromRoute] string userID)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
