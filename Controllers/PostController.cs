@@ -1,11 +1,13 @@
 ﻿using CSharpSnackisDB.Data;
 using CSharpSnackisDB.Entities;
 using CSharpSnackisDB.Models;
+using CSharpSnackisDB.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -99,11 +101,15 @@ namespace CSharpSnackisDB.Controllers
 
             if (user is not null)
             {
+                var listedWords = await _context.FilteredWords.Select(x => x.Words).ToArrayAsync();
+                string outputBodyText = FilteredWordsCheck.Filter(thread.BodyText, listedWords);
+                string outputTitle = FilteredWordsCheck.Filter(thread.Title, listedWords);
+
                 var topic = await _context.Topics.Where(x => x.TopicID == thread.TopicId).FirstAsync();
                 var newThread = new Thread
                 {
-                    Title = thread.Title,
-                    BodyText = thread.BodyText,
+                    Title = outputTitle,
+                    BodyText = outputBodyText,
                     Topic = topic,
                     User = user,
                 };
@@ -145,13 +151,17 @@ namespace CSharpSnackisDB.Controllers
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
+            var listedWords = await _context.FilteredWords.Select(x => x.Words).ToArrayAsync();
+            string outputBodyText = FilteredWordsCheck.Filter(thread.BodyText, listedWords);
+            string outputTitle = FilteredWordsCheck.Filter(thread.Title, listedWords);
+
             var updateThread = await _context.Threads.Where(x => x.ThreadID == id).FirstAsync();
 
             if (roles.Contains("root") || roles.Contains("admin") || updateThread.User.Id == user.Id)
             {
-                updateThread.Title = thread.Title;
-                updateThread.BodyText = thread.BodyText;
-                updateThread.CreateDate = thread.CreateDate;
+                updateThread.Title = outputTitle;
+                updateThread.BodyText = outputBodyText;
+                updateThread.EditDate = thread.EditDate;
 
                 _context.Update(updateThread);
                 await _context.SaveChangesAsync();
@@ -173,11 +183,15 @@ namespace CSharpSnackisDB.Controllers
 
             if (user is not null)
             {
+                var listedWords = await _context.FilteredWords.Select(x => x.Words).ToArrayAsync();
+                string outputBodyText = FilteredWordsCheck.Filter(post.BodyText, listedWords);
+                string outputTitle = FilteredWordsCheck.Filter(post.Title, listedWords);
+
                 var thread = await _context.Threads.Where(x => x.ThreadID == post.ThreadId).FirstAsync();
                 var newPost = new Post
                 {
-                    Title = post.Title,
-                    BodyText = post.BodyText,
+                    Title = outputTitle,
+                    BodyText = outputBodyText,
                     Thread = thread,
                     User = user,
                     IsThreadStart = post.IsThreadStart,
@@ -222,20 +236,25 @@ namespace CSharpSnackisDB.Controllers
         [HttpPut("UpdatePost/{id}")]//godkänd
         public async Task<ActionResult> UpdatePost([FromBody] PostResponseModel post, [FromRoute] string id)
         {
+
+            var listedWords = await _context.FilteredWords.Select(x => x.Words).ToArrayAsync();
+            string outputBodyText = FilteredWordsCheck.Filter(post.BodyText, listedWords);
+            string outputTitle = FilteredWordsCheck.Filter(post.Title, listedWords);
+
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
             var updatePost = await _context.Posts.Where(x => x.PostID == id).Include(x => x.User).Include(x => x.Thread).FirstAsync();
 
             if (roles.Contains("root") || roles.Contains("admin") || updatePost.User.Id == user.Id)
             {
-                updatePost.Title = post.Title;
-                updatePost.BodyText = post.BodyText;
+                updatePost.Title = outputTitle;
+                updatePost.BodyText = outputBodyText;
                 updatePost.EditDate = DateTime.Now;
                 if (updatePost.IsThreadStart)
                 {
                     var thread = await _context.Threads.Where(x => x.ThreadID == updatePost.Thread.ThreadID).FirstAsync();
-                    thread.Title = post.Title;
-                    thread.BodyText = post.BodyText;
+                    thread.Title = outputTitle; 
+                    thread.BodyText = outputBodyText;
                     thread.EditDate = DateTime.Now;
                     _context.Update(thread);
                 }
@@ -282,7 +301,7 @@ namespace CSharpSnackisDB.Controllers
                     {
                         post.PostReaction.Users.Add(user);
                         post.PostReaction.LikeCounter++;
-                        _context.UpdateRange(post);
+                        _context.PostReactions.Update(post.PostReaction);
                         await _context.SaveChangesAsync();
                         return Ok();
                     }
@@ -293,7 +312,7 @@ namespace CSharpSnackisDB.Controllers
                 {
                     post.PostReaction.Users.Remove(user);
                     post.PostReaction.LikeCounter--;
-                    _context.UpdateRange(post);
+                    _context.PostReactions.Update(post.PostReaction);
                     await _context.SaveChangesAsync();
                     return Ok();
                 }
@@ -315,6 +334,9 @@ namespace CSharpSnackisDB.Controllers
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
+
+            var listedWords = await _context.FilteredWords.Select(x => x.Words).ToArrayAsync();
+            string outputBodyText = FilteredWordsCheck.Filter(reply.BodyText, listedWords);
 
             if (user is not null)
             {
@@ -342,9 +364,12 @@ namespace CSharpSnackisDB.Controllers
             var roles = await _userManager.GetRolesAsync(user);
             var updateReply = await _context.Replies.Where(x => x.ReplyID == id).Include(x => x.User).FirstAsync();
 
+            var listedWords = await _context.FilteredWords.Select(x => x.Words).ToArrayAsync();
+            string outputBodyText = FilteredWordsCheck.Filter(reply.BodyText, listedWords);
+
             if (roles.Contains("root") || roles.Contains("admin") || updateReply.User.Id == user.Id)
             {
-                updateReply.BodyText = reply.BodyText;
+                updateReply.BodyText = outputBodyText;
                 updateReply.EditDate = DateTime.Now;
 
                 _context.Update(updateReply);
@@ -409,7 +434,7 @@ namespace CSharpSnackisDB.Controllers
                     {
                         reply.PostReaction.Users.Add(user);
                         reply.PostReaction.LikeCounter++;
-                        _context.UpdateRange(reply);
+                        _context.PostReactions.Update(reply.PostReaction);
                         await _context.SaveChangesAsync();
                         return Ok();
                     }
@@ -418,7 +443,7 @@ namespace CSharpSnackisDB.Controllers
                 {
                     reply.PostReaction.Users.Remove(user);
                     reply.PostReaction.LikeCounter--;
-                    _context.UpdateRange(reply);
+                    _context.PostReactions.Update(reply.PostReaction);
                     await _context.SaveChangesAsync();
                     return Ok();
                 }

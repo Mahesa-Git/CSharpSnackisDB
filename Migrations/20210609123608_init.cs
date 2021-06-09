@@ -22,6 +22,38 @@ namespace CSharpSnackisDB.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MailToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ProfileText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsReported = table.Column<bool>(type: "bit", nullable: false),
+                    IsBanned = table.Column<bool>(type: "bit", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -92,66 +124,6 @@ namespace CSharpSnackisDB.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Topics",
-                columns: table => new
-                {
-                    TopicID = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CategoryID = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EditDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Topics", x => x.TopicID);
-                    table.ForeignKey(
-                        name: "FK_Topics_Categories_CategoryID",
-                        column: x => x.CategoryID,
-                        principalTable: "Categories",
-                        principalColumn: "CategoryID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MailToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProfileText = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsReported = table.Column<bool>(type: "bit", nullable: false),
-                    IsBanned = table.Column<bool>(type: "bit", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PostReactionID = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_PostReactions_PostReactionID",
-                        column: x => x.PostReactionID,
-                        principalTable: "PostReactions",
-                        principalColumn: "PostReactionID",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -240,6 +212,27 @@ namespace CSharpSnackisDB.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Topics",
+                columns: table => new
+                {
+                    TopicID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CategoryID = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EditDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Topics", x => x.TopicID);
+                    table.ForeignKey(
+                        name: "FK_Topics_Categories_CategoryID",
+                        column: x => x.CategoryID,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GroupChatUser",
                 columns: table => new
                 {
@@ -260,6 +253,30 @@ namespace CSharpSnackisDB.Migrations
                         column: x => x.GroupChatsGroupChatID,
                         principalTable: "GroupChats",
                         principalColumn: "GroupChatID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostReactionUser",
+                columns: table => new
+                {
+                    PostReactionsPostReactionID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UsersId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostReactionUser", x => new { x.PostReactionsPostReactionID, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_PostReactionUser_AspNetUsers_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PostReactionUser_PostReactions_PostReactionsPostReactionID",
+                        column: x => x.PostReactionsPostReactionID,
+                        principalTable: "PostReactions",
+                        principalColumn: "PostReactionID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -377,17 +394,17 @@ namespace CSharpSnackisDB.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "root-0c0-aa65-4af8-bd17-00bd9344e575", "aed4e0d3-14a9-4f82-950d-c0e32620d63f", "root", "ROOT" });
+                values: new object[] { "root-0c0-aa65-4af8-bd17-00bd9344e575", "1fc1956a-c743-47b6-8b83-637eab004353", "root", "ROOT" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "user-2c0-aa65-4af8-bd17-00bd9344e575", "4e1949e4-8772-4f4f-9b64-9ed107558529", "User", "USER" });
+                values: new object[] { "user-2c0-aa65-4af8-bd17-00bd9344e575", "9adadf7d-8ba4-469b-ae82-4369e831bfb5", "User", "USER" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Country", "CreateDate", "Email", "EmailConfirmed", "Image", "IsBanned", "IsReported", "LockoutEnabled", "LockoutEnd", "MailToken", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "PostReactionID", "ProfileText", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "admin-c0-aa65-4af8-bd17-00bd9344e575", 0, "3086ce7c-bd4b-4ada-a5ed-0e5631bfc54e", null, new DateTime(2021, 6, 9, 11, 43, 36, 30, DateTimeKind.Local).AddTicks(1056), "admin@csharpsnackis.api", true, null, false, false, false, null, null, "ADMIN@csharsnackis.API", "ADMIN", "AQAAAAEAACcQAAAAEI+iH5pnZ2dI3o43UIDtiRdxA6rqPy112+rJymLjqaJ+xKpwyiyUWegYFsfk4hFblQ==", null, false, null, null, "36fa41dc-a6f0-4a3f-a0c4-8b211bbf1624", false, "admin" });
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Country", "CreateDate", "Email", "EmailConfirmed", "Image", "IsBanned", "IsReported", "LockoutEnabled", "LockoutEnd", "MailToken", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfileText", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "admin-c0-aa65-4af8-bd17-00bd9344e575", 0, "ce5ed461-dc44-4b2a-a6bf-95d60cd829ee", null, new DateTime(2021, 6, 9, 14, 36, 8, 306, DateTimeKind.Local).AddTicks(4257), "admin@csharpsnackis.api", true, null, false, false, false, null, null, "ADMIN@csharsnackis.API", "ADMIN", "AQAAAAEAACcQAAAAEAr/nNjfwIOLQlWQ+5WOJ8XvNZIvNWiJwe+rkzZM21xshnXTgpEo4fsUphh5irdgLg==", null, false, null, "144b5474-ccda-490c-ba53-71e765c76a8e", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -427,11 +444,6 @@ namespace CSharpSnackisDB.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_PostReactionID",
-                table: "AspNetUsers",
-                column: "PostReactionID");
-
-            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -441,6 +453,11 @@ namespace CSharpSnackisDB.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_GroupChatUser_UsersId",
                 table: "GroupChatUser",
+                column: "UsersId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostReactionUser_UsersId",
+                table: "PostReactionUser",
                 column: "UsersId");
 
             migrationBuilder.CreateIndex(
@@ -518,6 +535,9 @@ namespace CSharpSnackisDB.Migrations
                 name: "GroupChatUser");
 
             migrationBuilder.DropTable(
+                name: "PostReactionUser");
+
+            migrationBuilder.DropTable(
                 name: "Replies");
 
             migrationBuilder.DropTable(
@@ -530,6 +550,9 @@ namespace CSharpSnackisDB.Migrations
                 name: "Posts");
 
             migrationBuilder.DropTable(
+                name: "PostReactions");
+
+            migrationBuilder.DropTable(
                 name: "Threads");
 
             migrationBuilder.DropTable(
@@ -537,9 +560,6 @@ namespace CSharpSnackisDB.Migrations
 
             migrationBuilder.DropTable(
                 name: "Topics");
-
-            migrationBuilder.DropTable(
-                name: "PostReactions");
 
             migrationBuilder.DropTable(
                 name: "Categories");

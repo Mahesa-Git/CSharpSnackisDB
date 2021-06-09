@@ -15,6 +15,7 @@ namespace CSharpSnackisDB.Entities
         public bool IsReported { get; set; }
         public bool IsBanned { get; set; }
         public string Image { get; set; }
+        public List<PostReaction> PostReactions { get; set; }
         public List<Post> Posts { get; set; }
         public List<Reply> Replies { get; set; }
         public List<Thread> Threads { get; set; }

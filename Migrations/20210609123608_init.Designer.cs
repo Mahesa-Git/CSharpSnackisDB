@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSharpSnackisDB.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20210609094336_init")]
+    [Migration("20210609123608_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -289,9 +289,6 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PostReactionID")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ProfileText")
                         .HasColumnType("nvarchar(max)");
 
@@ -315,8 +312,6 @@ namespace CSharpSnackisDB.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("PostReactionID");
-
                     b.ToTable("AspNetUsers");
 
                     b.HasData(
@@ -324,8 +319,8 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3086ce7c-bd4b-4ada-a5ed-0e5631bfc54e",
-                            CreateDate = new DateTime(2021, 6, 9, 11, 43, 36, 30, DateTimeKind.Local).AddTicks(1056),
+                            ConcurrencyStamp = "ce5ed461-dc44-4b2a-a6bf-95d60cd829ee",
+                            CreateDate = new DateTime(2021, 6, 9, 14, 36, 8, 306, DateTimeKind.Local).AddTicks(4257),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
@@ -333,9 +328,9 @@ namespace CSharpSnackisDB.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEI+iH5pnZ2dI3o43UIDtiRdxA6rqPy112+rJymLjqaJ+xKpwyiyUWegYFsfk4hFblQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAr/nNjfwIOLQlWQ+5WOJ8XvNZIvNWiJwe+rkzZM21xshnXTgpEo4fsUphh5irdgLg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "36fa41dc-a6f0-4a3f-a0c4-8b211bbf1624",
+                            SecurityStamp = "144b5474-ccda-490c-ba53-71e765c76a8e",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -386,14 +381,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "aed4e0d3-14a9-4f82-950d-c0e32620d63f",
+                            ConcurrencyStamp = "1fc1956a-c743-47b6-8b83-637eab004353",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "4e1949e4-8772-4f4f-9b64-9ed107558529",
+                            ConcurrencyStamp = "9adadf7d-8ba4-469b-ae82-4369e831bfb5",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -514,6 +509,21 @@ namespace CSharpSnackisDB.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("PostReactionUser", b =>
+                {
+                    b.Property<string>("PostReactionsPostReactionID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PostReactionsPostReactionID", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("PostReactionUser");
+                });
+
             modelBuilder.Entity("CSharpSnackisDB.Entities.Post", b =>
                 {
                     b.HasOne("CSharpSnackisDB.Entities.PostReaction", "PostReaction")
@@ -586,13 +596,6 @@ namespace CSharpSnackisDB.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("CSharpSnackisDB.Entities.User", b =>
-                {
-                    b.HasOne("CSharpSnackisDB.Entities.PostReaction", null)
-                        .WithMany("Users")
-                        .HasForeignKey("PostReactionID");
-                });
-
             modelBuilder.Entity("GroupChatUser", b =>
                 {
                     b.HasOne("CSharpSnackisDB.Entities.GroupChat", null)
@@ -659,6 +662,21 @@ namespace CSharpSnackisDB.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PostReactionUser", b =>
+                {
+                    b.HasOne("CSharpSnackisDB.Entities.PostReaction", null)
+                        .WithMany()
+                        .HasForeignKey("PostReactionsPostReactionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CSharpSnackisDB.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CSharpSnackisDB.Entities.Category", b =>
                 {
                     b.Navigation("Topics");
@@ -672,11 +690,6 @@ namespace CSharpSnackisDB.Migrations
             modelBuilder.Entity("CSharpSnackisDB.Entities.Post", b =>
                 {
                     b.Navigation("Replies");
-                });
-
-            modelBuilder.Entity("CSharpSnackisDB.Entities.PostReaction", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Thread", b =>

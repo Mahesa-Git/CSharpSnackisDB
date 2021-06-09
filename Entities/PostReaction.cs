@@ -16,7 +16,6 @@ namespace CSharpSnackisDB.Entities
         public PostReaction()
         {
             PostReactionID = Guid.NewGuid().ToString();
-            Users = new List<User>();
         }
     }
 }
