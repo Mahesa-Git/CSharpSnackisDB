@@ -146,6 +146,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<string>("GroupChatID")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
@@ -184,6 +187,9 @@ namespace CSharpSnackisDB.Migrations
 
                     b.Property<DateTime>("EditDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
@@ -320,8 +326,8 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c23dc5e4-743f-49f1-86af-6d3d58c9db88",
-                            CreateDate = new DateTime(2021, 6, 9, 21, 45, 11, 351, DateTimeKind.Local).AddTicks(5390),
+                            ConcurrencyStamp = "fe808004-d516-4aa4-8288-2c53aad82ddb",
+                            CreateDate = new DateTime(2021, 6, 9, 23, 2, 2, 810, DateTimeKind.Local).AddTicks(982),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
@@ -329,9 +335,9 @@ namespace CSharpSnackisDB.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEL3r2+OifYScn7EXLueXd5AT8TDb1IwEWAFrimcyhYRwXbFv47ZzHkEEt+hU79A9Fw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBpWSx2mEamUO/WkH8h1Sv9YtLDe+GDMzAWRDvH1kOqrWaYgps/rDpQ8XFN1r43AeA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ad88fd9a-5e10-4581-9383-8ff4af1e5d23",
+                            SecurityStamp = "ba8a1c2c-c16a-4258-932c-52b30505cfe8",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -382,14 +388,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "0dd8a012-6ca4-4054-a56b-8df774d8a901",
+                            ConcurrencyStamp = "a9d7afa4-5c76-4f19-9518-c51a76b754fc",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "a1023850-1a03-4f16-ab48-d93472772588",
+                            ConcurrencyStamp = "69511a5f-db97-4603-a011-60f5286bd4d4",
                             Name = "User",
                             NormalizedName = "USER"
                         });

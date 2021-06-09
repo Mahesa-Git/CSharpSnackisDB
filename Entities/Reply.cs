@@ -6,6 +6,7 @@ namespace CSharpSnackisDB.Entities
     {
         public string ReplyID { get; set; }
         public string BodyText { get; set; }
+        public string Image { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime EditDate { get; set; }
         public bool IsReported { get; set; }
@@ -23,6 +24,7 @@ namespace CSharpSnackisDB.Entities
         {
             public string PostId { get; set; }
             public string BodyText { get; set; }
+            public string Image { get; set; }
 
         }
         public class ReplyToChatModel

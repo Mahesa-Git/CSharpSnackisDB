@@ -93,7 +93,7 @@ namespace CSharpSnackisDB.Controllers
         #endregion
 
         #region THREADS CRUD REGION
-        [HttpPost("CreateThread")] //godkänd
+        [HttpPost("CreateThread")]
         public async Task<ActionResult> CreateThread([FromBody] ThreadResponseModel thread)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
@@ -112,6 +112,7 @@ namespace CSharpSnackisDB.Controllers
                     BodyText = outputBodyText,
                     Topic = topic,
                     User = user,
+                    Image = thread.Image
                 };
                 await _context.Threads.AddAsync(newThread);
                 await _context.SaveChangesAsync();
@@ -128,14 +129,22 @@ namespace CSharpSnackisDB.Controllers
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            var result = await _context.Threads.Where(x => x.ThreadID == id).Include(x => x.User).Include(x => x.Posts).FirstAsync();
+            var result = await _context.Threads.Where(x => x.ThreadID == id).Include(x => x.User).Include(x => x.Posts).ThenInclude(x => x.PostReaction).FirstAsync();
             foreach (var post in result.Posts)
             {
-                post.Replies = await _context.Replies.Where(x => x.Post.PostID == post.PostID).ToListAsync();
+                post.Replies = await _context.Replies.Where(x => x.Post.PostID == post.PostID).Include(x => x.PostReaction).ToListAsync();
             }
 
             if (roles.Contains("root") || roles.Contains("admin") || result.User.Id == user.Id)
             {
+                foreach (var post in result.Posts)
+                {
+                    foreach (var reply in post.Replies)
+                    {
+                        _context.PostReactions.RemoveRange(reply.PostReaction);
+                    }
+                    _context.PostReactions.RemoveRange(post.PostReaction);
+                }
                 _context.Remove(result);
 
                 await _context.SaveChangesAsync();
@@ -170,12 +179,10 @@ namespace CSharpSnackisDB.Controllers
             else
                 return Unauthorized();
         }
-
-
         #endregion REGION
 
         #region POST CRUD REGION
-        [HttpPost("CreatePost")] //godkänd
+        [HttpPost("CreatePost")]
         public async Task<ActionResult> CreatePost([FromBody] PostResponseModel post)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
@@ -207,13 +214,13 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-        [HttpDelete("DeletePost/{id}")] //GODKÄND
+        [HttpDelete("DeletePost/{id}")]
         public async Task<ActionResult> DeletePosts([FromRoute] string id)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            var deletePost = await _context.Posts.Where(x => x.PostID == id).Include(x => x.Replies).Include(x => x.User).Include(x => x.Thread).FirstAsync();
+            var deletePost = await _context.Posts.Where(x => x.PostID == id).Include(x => x.PostReaction).Include(x => x.Replies).Include(x => x.PostReaction).Include(x => x.User).Include(x => x.Thread).FirstAsync();
 
             if (roles.Contains("root") || roles.Contains("admin") || deletePost.User.Id == user.Id)
             {
@@ -225,6 +232,11 @@ namespace CSharpSnackisDB.Controllers
                 if (deletePost.Replies.Count > 0)
                     _context.RemoveRange(deletePost.Replies);
 
+                foreach (var reply in deletePost.Replies)
+                {
+                    _context.PostReactions.RemoveRange(reply.PostReaction);
+                }
+                _context.PostReactions.RemoveRange(deletePost.PostReaction);
                 _context.Remove(deletePost);
 
                 await _context.SaveChangesAsync();
@@ -234,7 +246,7 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-        [HttpPut("UpdatePost/{id}")]//godkänd
+        [HttpPut("UpdatePost/{id}")]
         public async Task<ActionResult> UpdatePost([FromBody] PostResponseModel post, [FromRoute] string id)
         {
 
@@ -330,7 +342,7 @@ namespace CSharpSnackisDB.Controllers
         #endregion
 
         #region REPLY CRUD REGION
-        [HttpPost("CreateReply")]//godkänd
+        [HttpPost("CreateReply")]
         public async Task<ActionResult> CreateReply([FromBody] ReplyResponseModel reply)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
@@ -348,7 +360,8 @@ namespace CSharpSnackisDB.Controllers
                     Post = post,
                     BodyText = reply.BodyText,
                     User = user,
-                    PostReaction = new PostReaction()
+                    PostReaction = new PostReaction(),
+                    Image = reply.Image
 
                 };
                 _context.Add(newReply);
@@ -358,7 +371,7 @@ namespace CSharpSnackisDB.Controllers
             else
                 return Unauthorized();
         }
-        [HttpPut("UpdateReply/{id}")] //Godkänd
+        [HttpPut("UpdateReply/{id}")] 
         public async Task<ActionResult> UpdateReply([FromBody] ReplyResponseModel reply, [FromRoute] string id)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
@@ -381,16 +394,17 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
         }
 
-        [HttpDelete("DeleteReply/{id}")] //GODKÄND
+        [HttpDelete("DeleteReply/{id}")] 
         public async Task<ActionResult> DeleteReply([FromRoute] string id)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            var deleteReply = await _context.Replies.Where(x => x.ReplyID == id).Include(x => x.User).FirstAsync();
+            var deleteReply = await _context.Replies.Where(x => x.ReplyID == id).Include(x => x.User).Include(x => x.PostReaction).FirstAsync();
 
             if (roles.Contains("root") || roles.Contains("admin") || deleteReply.User.Id == user.Id)
             {
+                _context.PostReactions.RemoveRange(deleteReply.PostReaction);
                 _context.Remove(deleteReply);
 
                 await _context.SaveChangesAsync();
