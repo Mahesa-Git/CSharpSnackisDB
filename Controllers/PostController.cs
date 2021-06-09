@@ -81,6 +81,13 @@ namespace CSharpSnackisDB.Controllers
             var post = await _context.Posts.Where(x => x.PostID == postID).Include(x => x.PostReaction).ThenInclude(x => x.Users).FirstAsync();
             return Ok(post.PostReaction);
         }
+        [AllowAnonymous]
+        [HttpGet("ReadReplyReaction/{replyID}")]
+        public async Task<ActionResult> ReadReplyReaction(string replyID)
+        {
+            var reply = await _context.Replies.Where(x => x.ReplyID == replyID).Include(x => x.PostReaction).ThenInclude(x => x.Users).FirstAsync();
+            return Ok(reply.PostReaction);
+        }
         #endregion
 
         #region THREADS CRUD REGION
@@ -267,7 +274,7 @@ namespace CSharpSnackisDB.Controllers
 
             if (roles.Contains("root") || roles.Contains("admin") || roles.Contains("User"))
             {
-                var post = await _context.Posts.Where(x => x.PostID == reactionModel.TextID).Include(x => x.PostReaction).Include(x => x.User).FirstAsync();
+                var post = await _context.Posts.Where(x => x.PostID == reactionModel.TextID).Include(x => x.PostReaction).ThenInclude(x => x.Users).FirstAsync();
 
                 if(reactionModel.AddOrRemove)
                 {
@@ -379,6 +386,46 @@ namespace CSharpSnackisDB.Controllers
                 _context.Update(reply);
                 await _context.SaveChangesAsync();
                 return Ok();
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
+
+        [HttpPut("ReactToReply")]
+        public async Task<ActionResult> ReactToReply([FromBody] ReactionModel reactionModel)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("root") || roles.Contains("admin") || roles.Contains("User"))
+            {
+                var reply = await _context.Replies.Where(x => x.ReplyID == reactionModel.TextID).Include(x => x.PostReaction).ThenInclude(x => x.Users).FirstAsync();
+
+                if (reactionModel.AddOrRemove)
+                {
+                    if (!reply.PostReaction.Users.Contains(user))
+                    {
+                        reply.PostReaction.Users.Add(user);
+                        reply.PostReaction.LikeCounter++;
+                        _context.UpdateRange(reply);
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+                }
+                if (!reactionModel.AddOrRemove)
+                {
+                    reply.PostReaction.Users.Remove(user);
+                    reply.PostReaction.LikeCounter--;
+                    _context.UpdateRange(reply);
+                    await _context.SaveChangesAsync();
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
             else
             {
