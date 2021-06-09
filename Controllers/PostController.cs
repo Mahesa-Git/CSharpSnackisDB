@@ -195,7 +195,8 @@ namespace CSharpSnackisDB.Controllers
                     Thread = thread,
                     User = user,
                     IsThreadStart = post.IsThreadStart,
-                    PostReaction = new PostReaction()
+                    PostReaction = new PostReaction(),
+                    Image = post.Image
                 };
 
                 await _context.Posts.AddAsync(newPost);

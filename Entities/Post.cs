@@ -19,6 +19,7 @@ namespace CSharpSnackisDB.Entities
         public Thread Thread { get; set; }
         public PostReaction PostReaction { get; set; }
         public List<Reply> Replies { get; set; }
+        public string Image { get; set; }
 
         public Post()
         {
@@ -32,6 +33,7 @@ namespace CSharpSnackisDB.Entities
         public string BodyText { get; set; }
         public string ThreadId { get; set; }
         public bool IsThreadStart { get; set; }
+        public string Image { get; set; }
     }
     public class APIPost
     {

@@ -81,6 +81,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<DateTime>("EditDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
@@ -317,8 +320,8 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ce5ed461-dc44-4b2a-a6bf-95d60cd829ee",
-                            CreateDate = new DateTime(2021, 6, 9, 14, 36, 8, 306, DateTimeKind.Local).AddTicks(4257),
+                            ConcurrencyStamp = "c23dc5e4-743f-49f1-86af-6d3d58c9db88",
+                            CreateDate = new DateTime(2021, 6, 9, 21, 45, 11, 351, DateTimeKind.Local).AddTicks(5390),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
@@ -326,9 +329,9 @@ namespace CSharpSnackisDB.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAr/nNjfwIOLQlWQ+5WOJ8XvNZIvNWiJwe+rkzZM21xshnXTgpEo4fsUphh5irdgLg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEL3r2+OifYScn7EXLueXd5AT8TDb1IwEWAFrimcyhYRwXbFv47ZzHkEEt+hU79A9Fw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "144b5474-ccda-490c-ba53-71e765c76a8e",
+                            SecurityStamp = "ad88fd9a-5e10-4581-9383-8ff4af1e5d23",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -379,14 +382,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "1fc1956a-c743-47b6-8b83-637eab004353",
+                            ConcurrencyStamp = "0dd8a012-6ca4-4054-a56b-8df774d8a901",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "9adadf7d-8ba4-469b-ae82-4369e831bfb5",
+                            ConcurrencyStamp = "a1023850-1a03-4f16-ab48-d93472772588",
                             Name = "User",
                             NormalizedName = "USER"
                         });
