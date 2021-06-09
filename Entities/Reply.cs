@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CSharpSnackisDB.Entities
 {
@@ -15,6 +12,7 @@ namespace CSharpSnackisDB.Entities
         public User User { get; set; }
         public Post Post { get; set; }
         public GroupChat GroupChat { get; set; }
+        public PostReaction PostReaction { get; set; }
 
         public Reply()
         {
@@ -32,5 +30,12 @@ namespace CSharpSnackisDB.Entities
             public string GroupChatID { get; set; }
             public string BodyText { get; set; }
         }
+    }
+    public class APIReply
+    {
+        public string BodyText { get; set; }
+        public string UserName { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime EditDate { get; set; }
     }
 }

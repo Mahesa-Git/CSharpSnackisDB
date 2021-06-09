@@ -87,6 +87,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<bool>("IsThreadStart")
                         .HasColumnType("bit");
 
+                    b.Property<string>("PostReactionID")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ThreadID")
                         .HasColumnType("nvarchar(450)");
 
@@ -97,6 +100,8 @@ namespace CSharpSnackisDB.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("PostID");
+
+                    b.HasIndex("PostReactionID");
 
                     b.HasIndex("ThreadID");
 
@@ -110,23 +115,13 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<string>("PostReactionID")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Counter")
-                        .HasColumnType("int");
+                    b.Property<bool>("AddOrRemove")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("PostID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ReplyID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("TypeID")
+                    b.Property<int>("LikeCounter")
                         .HasColumnType("int");
 
                     b.HasKey("PostReactionID");
-
-                    b.HasIndex("PostID");
-
-                    b.HasIndex("ReplyID");
 
                     b.ToTable("PostReactions");
                 });
@@ -154,6 +149,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<string>("PostID")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("PostReactionID")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -162,6 +160,8 @@ namespace CSharpSnackisDB.Migrations
                     b.HasIndex("GroupChatID");
 
                     b.HasIndex("PostID");
+
+                    b.HasIndex("PostReactionID");
 
                     b.HasIndex("UserId");
 
@@ -258,6 +258,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<bool>("IsBanned")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsReported")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -284,6 +287,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("PostReactionID")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ProfileText")
                         .HasColumnType("nvarchar(max)");
 
@@ -307,6 +313,8 @@ namespace CSharpSnackisDB.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("PostReactionID");
+
                     b.ToTable("AspNetUsers");
 
                     b.HasData(
@@ -314,17 +322,18 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e5315841-c908-4cb2-a520-a5b5b886bc14",
-                            CreateDate = new DateTime(2021, 6, 2, 20, 37, 17, 834, DateTimeKind.Local).AddTicks(334),
+                            ConcurrencyStamp = "2f459ff3-0ac6-4228-a486-d9b17bc9a2cd",
+                            CreateDate = new DateTime(2021, 6, 9, 9, 55, 59, 401, DateTimeKind.Local).AddTicks(4613),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
+                            IsReported = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEPCeGHXUTvdca2NdfetBm3XMJ0kvbsn8gvg0HjKCrkgiyf7pYeqz2Nd9THeJrvmgHQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJJNgSxwA7JihVF7mWfNCF1HmUhFNoItUNE9eyEypXpC4lycY6DvDRZtLMaBT4N3HQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0a73ca50-ec98-4cee-9b71-ae0a862e2910",
+                            SecurityStamp = "87691e89-afa3-4c5a-8e63-11607514cf93",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -375,14 +384,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "b351f3c6-d1de-4d0d-a420-ab2848e9595f",
+                            ConcurrencyStamp = "c854096b-f5d9-4d8d-aaf8-f957cb98329b",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "f627599e-0499-48bf-b124-09514b98ba19",
+                            ConcurrencyStamp = "8639b9b8-09ae-4751-bc61-e40df7d6470d",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -505,6 +514,10 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Post", b =>
                 {
+                    b.HasOne("CSharpSnackisDB.Entities.PostReaction", "PostReaction")
+                        .WithMany()
+                        .HasForeignKey("PostReactionID");
+
                     b.HasOne("CSharpSnackisDB.Entities.Thread", "Thread")
                         .WithMany("Posts")
                         .HasForeignKey("ThreadID");
@@ -513,24 +526,11 @@ namespace CSharpSnackisDB.Migrations
                         .WithMany("Posts")
                         .HasForeignKey("UserId");
 
+                    b.Navigation("PostReaction");
+
                     b.Navigation("Thread");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CSharpSnackisDB.Entities.PostReaction", b =>
-                {
-                    b.HasOne("CSharpSnackisDB.Entities.Post", "Post")
-                        .WithMany("PostReactions")
-                        .HasForeignKey("PostID");
-
-                    b.HasOne("CSharpSnackisDB.Entities.Reply", "Reply")
-                        .WithMany()
-                        .HasForeignKey("ReplyID");
-
-                    b.Navigation("Post");
-
-                    b.Navigation("Reply");
                 });
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Reply", b =>
@@ -543,6 +543,10 @@ namespace CSharpSnackisDB.Migrations
                         .WithMany("Replies")
                         .HasForeignKey("PostID");
 
+                    b.HasOne("CSharpSnackisDB.Entities.PostReaction", "PostReaction")
+                        .WithMany()
+                        .HasForeignKey("PostReactionID");
+
                     b.HasOne("CSharpSnackisDB.Entities.User", "User")
                         .WithMany("Replies")
                         .HasForeignKey("UserId");
@@ -550,6 +554,8 @@ namespace CSharpSnackisDB.Migrations
                     b.Navigation("GroupChat");
 
                     b.Navigation("Post");
+
+                    b.Navigation("PostReaction");
 
                     b.Navigation("User");
                 });
@@ -576,6 +582,13 @@ namespace CSharpSnackisDB.Migrations
                         .HasForeignKey("CategoryID");
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("CSharpSnackisDB.Entities.User", b =>
+                {
+                    b.HasOne("CSharpSnackisDB.Entities.PostReaction", null)
+                        .WithMany("Users")
+                        .HasForeignKey("PostReactionID");
                 });
 
             modelBuilder.Entity("GroupChatUser", b =>
@@ -656,9 +669,12 @@ namespace CSharpSnackisDB.Migrations
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Post", b =>
                 {
-                    b.Navigation("PostReactions");
-
                     b.Navigation("Replies");
+                });
+
+            modelBuilder.Entity("CSharpSnackisDB.Entities.PostReaction", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Thread", b =>

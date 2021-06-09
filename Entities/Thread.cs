@@ -29,4 +29,14 @@ namespace CSharpSnackisDB.Entities
         public string BodyText { get; set; }
         public string TopicId { get; set; }
     }
+    public class APIThread
+    {
+        public string ThreadID { get; set; }
+        public string UserName { get; set; }
+        public string Title { get; set; }
+        public string BodyText { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime EditDate { get; set; }
+        public List<APIPost> Posts { get; set; }
+    }
 }
