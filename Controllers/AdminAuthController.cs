@@ -18,7 +18,6 @@ namespace CSharpSnackisDB.Controllers
     [Authorize]
     public class AdminAuthController : ControllerBase
     {
-
         private const string ApiKey = "localhost:44302";
         private const string FeKey = "localhost:44335";
 

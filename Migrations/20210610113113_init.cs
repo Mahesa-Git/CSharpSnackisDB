@@ -397,17 +397,17 @@ namespace CSharpSnackisDB.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "root-0c0-aa65-4af8-bd17-00bd9344e575", "a9d7afa4-5c76-4f19-9518-c51a76b754fc", "root", "ROOT" });
+                values: new object[] { "root-0c0-aa65-4af8-bd17-00bd9344e575", "d80ce274-aa5e-46b5-b684-a7da1666ae66", "root", "ROOT" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "user-2c0-aa65-4af8-bd17-00bd9344e575", "69511a5f-db97-4603-a011-60f5286bd4d4", "User", "USER" });
+                values: new object[] { "user-2c0-aa65-4af8-bd17-00bd9344e575", "656f545e-f3e6-434b-9eb1-5963dfed7934", "User", "USER" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Country", "CreateDate", "Email", "EmailConfirmed", "Image", "IsBanned", "IsReported", "LockoutEnabled", "LockoutEnd", "MailToken", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfileText", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "admin-c0-aa65-4af8-bd17-00bd9344e575", 0, "fe808004-d516-4aa4-8288-2c53aad82ddb", null, new DateTime(2021, 6, 9, 23, 2, 2, 810, DateTimeKind.Local).AddTicks(982), "admin@csharpsnackis.api", true, null, false, false, false, null, null, "ADMIN@csharsnackis.API", "ADMIN", "AQAAAAEAACcQAAAAEBpWSx2mEamUO/WkH8h1Sv9YtLDe+GDMzAWRDvH1kOqrWaYgps/rDpQ8XFN1r43AeA==", null, false, null, "ba8a1c2c-c16a-4258-932c-52b30505cfe8", false, "admin" });
+                values: new object[] { "admin-c0-aa65-4af8-bd17-00bd9344e575", 0, "7ae56a15-5f72-46e7-9499-073a8294f7be", null, new DateTime(2021, 6, 10, 13, 31, 13, 70, DateTimeKind.Local).AddTicks(4073), "admin@csharpsnackis.api", true, null, false, false, false, null, null, "ADMIN@csharsnackis.API", "ADMIN", "AQAAAAEAACcQAAAAEAlVceK0fRc10QRjVe2lfqxxsF81u9e5OMTJ+kcBFZzkv+TdYdSfBzIql3FXt+EPXw==", null, false, null, "8f4ae376-83e5-482b-9465-8995b581bc4a", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

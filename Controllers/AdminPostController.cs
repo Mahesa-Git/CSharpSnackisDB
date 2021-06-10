@@ -125,10 +125,14 @@ namespace CSharpSnackisDB.Controllers
                             foreach (var reply in post.Replies)
                             {
                                 _context.PostReactions.RemoveRange(reply.PostReaction);
+                                _context.Replies.RemoveRange(reply);
                             }
                             _context.PostReactions.RemoveRange(post.PostReaction);
+                            _context.Posts.RemoveRange(post);
                         }
+                        _context.Threads.RemoveRange(thread);
                     }
+                    _context.Topics.RemoveRange(topic);
                 }
 
                 _context.RemoveRange(category);
@@ -189,7 +193,7 @@ namespace CSharpSnackisDB.Controllers
 
                 foreach (var thread in topic.Threads)
                 {
-                    thread.Posts = await _context.Posts.Where(x => x.Thread.ThreadID == thread.ThreadID).Include(x => x.PostReaction).Include(x => x.Replies).Include(x => x.PostReaction).ToListAsync();
+                    thread.Posts = await _context.Posts.Where(x => x.Thread.ThreadID == thread.ThreadID).Include(x => x.PostReaction).Include(x => x.Replies).ThenInclude(x => x.PostReaction).ToListAsync();
                 }
 
                 foreach (var thread in topic.Threads)
@@ -199,9 +203,12 @@ namespace CSharpSnackisDB.Controllers
                         foreach (var reply in post.Replies)
                         {
                             _context.PostReactions.RemoveRange(reply.PostReaction);
+                            _context.Replies.RemoveRange(reply);
                         }
                         _context.PostReactions.RemoveRange(post.PostReaction);
+                        _context.Posts.RemoveRange(post);
                     }
+                    _context.Threads.RemoveRange(thread);
                 }
 
                 _context.RemoveRange(topic);

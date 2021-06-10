@@ -142,8 +142,10 @@ namespace CSharpSnackisDB.Controllers
                     foreach (var reply in post.Replies)
                     {
                         _context.PostReactions.RemoveRange(reply.PostReaction);
+                        _context.Replies.RemoveRange(reply);
                     }
                     _context.PostReactions.RemoveRange(post.PostReaction);
+                    _context.Posts.RemoveRange(post);
                 }
                 _context.Remove(result);
 
@@ -220,26 +222,24 @@ namespace CSharpSnackisDB.Controllers
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             var roles = await _userManager.GetRolesAsync(user);
 
-            var deletePost = await _context.Posts.Where(x => x.PostID == id).Include(x => x.PostReaction).Include(x => x.Replies).Include(x => x.PostReaction).Include(x => x.User).Include(x => x.Thread).FirstAsync();
+            var deletePost = await _context.Posts.Where(x => x.PostID == id).Include(x => x.PostReaction).Include(x => x.Replies).ThenInclude(x => x.PostReaction).Include(x => x.User).Include(x => x.Thread).FirstAsync();
 
             if (roles.Contains("root") || roles.Contains("admin") || deletePost.User.Id == user.Id)
             {
-                if (deletePost.IsThreadStart)
-                {
-                    ActionResult deletethread = await DeleteThread(deletePost.Thread.ThreadID);
-                }
-
-                if (deletePost.Replies.Count > 0)
-                    _context.RemoveRange(deletePost.Replies);
 
                 foreach (var reply in deletePost.Replies)
                 {
                     _context.PostReactions.RemoveRange(reply.PostReaction);
                 }
+                _context.Replies.RemoveRange(deletePost.Replies);
                 _context.PostReactions.RemoveRange(deletePost.PostReaction);
-                _context.Remove(deletePost);
-
+                _context.RemoveRange(deletePost);
                 await _context.SaveChangesAsync();
+                
+                if (deletePost.IsThreadStart)
+                {
+                    ActionResult deletethread = await DeleteThread(deletePost.Thread.ThreadID);
+                }
                 return Ok();
             }
             else
