@@ -52,7 +52,7 @@ namespace CSharpSnackisDB.Controllers
         public async Task<ActionResult> ReadThreadsInTopics(string topicID)
         {
             var topic = await _context.Topics.Where(x => x.TopicID == topicID).FirstAsync();
-            var allThreads = await _context.Threads.Where(x => x.Topic == topic).Include(x => x.User).OrderBy(x => x.CreateDate).ToListAsync();
+            var allThreads = await _context.Threads.Where(x => x.Topic == topic).Include(x => x.Posts).ThenInclude(x => x.User).OrderBy(x => x.CreateDate).ToListAsync();
             return Ok(allThreads);
         }
 
@@ -358,7 +358,7 @@ namespace CSharpSnackisDB.Controllers
                 var newReply = new Reply
                 {
                     Post = post,
-                    BodyText = reply.BodyText,
+                    BodyText = outputBodyText,
                     User = user,
                     PostReaction = new PostReaction(),
                     Image = reply.Image

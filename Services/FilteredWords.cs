@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace CSharpSnackisDB.Services
 {
@@ -12,6 +13,7 @@ namespace CSharpSnackisDB.Services
     {
         public static string Filter(string input, string[] badWords)
         {
+
             var re = new Regex(
                 @"("
                 + string.Join("|", badWords.Select(word =>
