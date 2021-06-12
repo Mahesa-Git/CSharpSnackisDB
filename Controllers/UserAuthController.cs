@@ -37,7 +37,7 @@ namespace CSharpSnackisDB.Controllers
             _sender = sender;
         }
 
-        #region LOGIN/REGISTER/MAILAUTHENTICATION REGION
+        #region LOGIN/REGISTER REGION
 
         private bool MailChecker(string email)
         {
