@@ -236,67 +236,6 @@ namespace CSharpSnackisDB.Controllers
 
         }
 
-        [HttpPut("userupdate")]
-        public async Task<ActionResult> UserUpdate([FromBody] RegisterModel model)
-        {
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            User userEmail = await _userManager.FindByEmailAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Email)).Value);
-
-            var UserCheck = await _userManager.FindByNameAsync(user.UserName);
-            var UserMailCheck = await _userManager.FindByEmailAsync(userEmail.Email);
-
-            bool sameEmail = user.Email == model.Email ? true : false;
-            bool sameUsername = user.UserName == model.Username ? true : false;
-
-            if (!sameEmail && UserMailCheck != null)
-            {
-                return BadRequest("E-mail in use");
-            }
-            if (!sameUsername && UserCheck != null)
-            {
-                return BadRequest("Username in use");
-            }
-
-            if (user is not null)
-            {
-                user.UserName = model.Username;
-                user.Email = model.Email;
-                user.Country = model.Country;
-                user.MailToken = null;
-                user.EmailConfirmed = false;
-                user.NormalizedUserName = model.Username.ToUpper();
-                user.NormalizedEmail = model.Email.ToUpper();
-
-                await _context.SaveChangesAsync();
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes("default-key-xxxx-aaaa-qqqq-default-key-xxxx-aaaa-qqqq");
-
-                var exp = DateTime.UtcNow.AddDays(1);
-
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                            new Claim(ClaimTypes.Name, model.Username),
-                            new Claim(ClaimTypes.Email, model.Email)
-
-                    }),
-                    Expires = exp,
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
-
-                return Ok(new { Token = tokenString, Expires = exp });
-            }
-            else
-            {
-                return BadRequest("Error, user not found");
-            }
-        }
-
         [HttpPut("userProfileTextUpdate")]
         public async Task<ActionResult> UserProfileTextUpdate([FromBody] RegisterModel model)
         {
@@ -319,8 +258,8 @@ namespace CSharpSnackisDB.Controllers
             }
         }
 
-        [HttpPut("userProfileUsernameUpdate")]
-        public async Task<ActionResult> UserProfileUsernameUpdate([FromBody] RegisterModel model)
+        [HttpPut("userProfileUpdate")]
+        public async Task<ActionResult> UserProfileUpdate([FromBody] RegisterModel model)
         {
             var UserMailCheck = await _userManager.FindByEmailAsync(model.Email);
             var UserCheck = await _userManager.FindByNameAsync(model.Username);
@@ -380,6 +319,37 @@ namespace CSharpSnackisDB.Controllers
                 return BadRequest("Error, user not found");
             }
         }
+        [HttpGet("userImageUpdate/{id}")]
+        public async Task<ActionResult> UserProfileUpdate([FromRoute] string id)
+        {
+
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            if (user is not null)
+            {
+                user.Image = id;
+                await _userManager.UpdateAsync(user);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Error, user not found");
+            }
+        }
+        [HttpGet("userImageDelete")]
+        public async Task<ActionResult> UserProfileDelete()
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            if (user is not null)
+            {
+                user.Image = null;
+                await _userManager.UpdateAsync(user);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Error, user not found");
+            }
+        }
 
         [HttpPost("changepassword")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordModel model)
@@ -417,7 +387,8 @@ namespace CSharpSnackisDB.Controllers
         public async Task<ActionResult> GetProfile(string Id)
         {
             User user = await _userManager.FindByIdAsync(Id);
-
+            
+            
             if (user is not null)
             {
                 return Ok(user);

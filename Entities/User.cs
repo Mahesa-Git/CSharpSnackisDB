@@ -27,4 +27,14 @@ namespace CSharpSnackisDB.Entities
         }
 
     }
+    public class UserReturnModel
+    {
+        public string Id { get; set; }
+        public string Country { get; set; }
+        public DateTime CreateDate { get; set; }
+        public string ProfileText { get; set; }
+        public bool IsReported { get; set; }
+        public bool IsBanned { get; set; }
+        public string Image { get; set; }
+    }
 }
