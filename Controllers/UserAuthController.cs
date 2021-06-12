@@ -118,7 +118,7 @@ namespace CSharpSnackisDB.Controllers
                 NormalizedEmail = model.Email.ToUpper(),
                 Country = model.Country,
                 MailToken = null,
-                EmailConfirmed = true, //ÄNDRA SEN NÄR DEPLOY MAILAUTH
+                EmailConfirmed = true,
                 ProfileText = model.ProfileText,
                 Image = model.Image
 
@@ -143,99 +143,18 @@ namespace CSharpSnackisDB.Controllers
 
             if (result.Succeeded)
             {
-                //User user = await _userManager.FindByNameAsync(newUser.UserName);
-
                 await _userManager.AddToRoleAsync(newUser, "User");
-
-                //var userId = await _userManager.GetUserIdAsync(newUser);
-                //var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-
-                //user.MailToken = token;
                 await _context.SaveChangesAsync();
-
-                //var urlContent = Url.Content($"https://{ApiKey}/userauth/Mailauthentication/{userId}");
-                //var link = Url.Content($"https://{FeKey}/index"); 
-
-                //await _sender.SendEmailAsync(newUser.Email, "Bekräfta din e-post genom att klicka på länken", "<p>Klicka här för att bekräfta din e-post</p>" + urlContent +
-                //                                            "</br></br><p>Fungerar inte länken? Få ett nytt utskick genom att försöka logga in på hemsidan:</br></br>" +
-                //                                            $" {link}");
-
-                //return Ok(newUser.Id);
                 return Ok();
             }
             else
             {
                 return BadRequest("Registration failed");
             }
-        }
-
-        [AllowAnonymous]
-        [HttpGet("ResendMail/{id}")]
-        public async Task<ActionResult> ResendAuthMail(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user is not null)
-            {
-                var urlContent = Url.Content($"https://{ApiKey}/userauth/Mailauthentication/{user.Id}");
-                var link = Url.Content($"https://{FeKey}/index"); // ändra sen FE
-
-                await _sender.SendEmailAsync(user.Email, "Bekräfta din e-post genom att klicka på länken", "<p>Klicka här för att bekräfta din e-post</p>" + urlContent +
-                                                            "</br></br><p>Fungerar inte länken? Få ett nytt utskick genom att försöka logga in på hemsidan:</br></br>" +
-                                                            $" {link}");
-                return Redirect($"https://{FeKey}/RegisterConfirmation"); // ÄNDRA SEN FE
-            }
-            else
-                return BadRequest("User not found. Try to create another user or contact us at ggwebbshop@gmail.com");
-        }
-
-        [AllowAnonymous]
-        [HttpGet("MailAuthentication/{id}")]
-        public async Task<ActionResult> AuthenticateEmail(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
-                return BadRequest("The user was not found. It might be deleted. If it's your account and you've not yet validated your e-mail by clicking the sent link for validation of the account: check your e-mail for messages that might be generated after your first attempt.");
-
-            if (user.EmailConfirmed == true)
-                return BadRequest("The account have already been activated for this user");
-
-            var result = await _userManager.ConfirmEmailAsync(user, user.MailToken);
-
-            if (result.Succeeded)
-            {
-                user.MailToken = null;
-                await _context.SaveChangesAsync();
-                return Redirect($"https://{FeKey}/SuccessfulEmailConfirm"); // ÄNDRA SEN FE
-            }
-
-            else
-                return BadRequest("Contact administrator for setting the mailauthentication manually at ggwebshop@gmail.com");
-        }
+        }   
         #endregion
 
         #region USER CRUD REGION
-        [HttpDelete("userdelete")]
-        public async Task<ActionResult> UserDelete()
-        {
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            var roles = await _userManager.GetRolesAsync(user);
-
-            try
-            {
-                _context.Remove(user);
-                await _context.SaveChangesAsync();
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-
-            }
-            return Ok();
-
-        }
-
         [HttpPut("userProfileTextUpdate")]
         public async Task<ActionResult> UserProfileTextUpdate([FromBody] RegisterModel model)
         {
@@ -257,7 +176,6 @@ namespace CSharpSnackisDB.Controllers
                 return BadRequest("Error, user not found");
             }
         }
-
         [HttpPut("userProfileUpdate")]
         public async Task<ActionResult> UserProfileUpdate([FromBody] RegisterModel model)
         {
@@ -350,7 +268,6 @@ namespace CSharpSnackisDB.Controllers
                 return BadRequest("Error, user not found");
             }
         }
-
         [HttpPost("changepassword")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordModel model)
         {
@@ -382,7 +299,6 @@ namespace CSharpSnackisDB.Controllers
                 return BadRequest(new { message = "Your password does not match." });
             }
         }
-
         [HttpGet("profile/{id}")]
         public async Task<ActionResult> GetProfile(string Id)
         {

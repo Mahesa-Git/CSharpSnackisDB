@@ -37,7 +37,6 @@ namespace CSharpSnackisDB.Controllers
             var allCategories = await _context.Categories.OrderBy(x => x.CreateDate).ToListAsync();
             return Ok(allCategories);
         }
-
         [AllowAnonymous]
         [HttpGet("ReadTopicsInCategory/{categoryId}")]
         public async Task<ActionResult> ReadTopicsInCategory(string categoryID)
@@ -46,7 +45,6 @@ namespace CSharpSnackisDB.Controllers
             var allTopics = await _context.Topics.Where(x => x.Category == category).OrderBy(x => x.CreateDate).ToListAsync();
             return Ok(allTopics);
         }
-
         [AllowAnonymous]
         [HttpGet("ReadThreadsInTopic/{TopicId}")]
         public async Task<ActionResult> ReadThreadsInTopics(string topicID)
@@ -55,8 +53,6 @@ namespace CSharpSnackisDB.Controllers
             var allThreads = await _context.Threads.Where(x => x.Topic == topic).Include(x => x.Posts).ThenInclude(x => x.User).OrderBy(x => x.CreateDate).ToListAsync();
             return Ok(allThreads);
         }
-
-
         [AllowAnonymous]
         [HttpGet("ReadPostsInThread/{ThreadId}")]
         public async Task<ActionResult> ReadPostsInThread(string threadID)
@@ -66,7 +62,6 @@ namespace CSharpSnackisDB.Controllers
 
             return Ok(allPosts);
         }
-
         [AllowAnonymous]
         [HttpGet("ReadRepliesToPost/{PostId}")]
         public async Task<ActionResult> ReadRepliesToPost(string postID)
@@ -137,20 +132,28 @@ namespace CSharpSnackisDB.Controllers
 
             if (roles.Contains("root") || roles.Contains("admin") || result.User.Id == user.Id)
             {
+                var postAndReplyImageIDs = new List<string>();
+
                 foreach (var post in result.Posts)
                 {
                     foreach (var reply in post.Replies)
                     {
+                        if(!string.IsNullOrEmpty(reply.Image))
+                            postAndReplyImageIDs.Add(reply.Image);
+
                         _context.PostReactions.RemoveRange(reply.PostReaction);
                         _context.Replies.RemoveRange(reply);
                     }
+                    if(!string.IsNullOrEmpty(post.Image))
+                        postAndReplyImageIDs.Add(post.Image);
+
                     _context.PostReactions.RemoveRange(post.PostReaction);
                     _context.Posts.RemoveRange(post);
                 }
                 _context.Remove(result);
 
                 await _context.SaveChangesAsync();
-                return Ok();
+                return Ok(postAndReplyImageIDs);
             }
             else
                 return Unauthorized();
@@ -226,11 +229,16 @@ namespace CSharpSnackisDB.Controllers
 
             if (roles.Contains("root") || roles.Contains("admin") || deletePost.User.Id == user.Id)
             {
-
+                var deletedReplyImageIDs = new List<string>();
                 foreach (var reply in deletePost.Replies)
                 {
                     _context.PostReactions.RemoveRange(reply.PostReaction);
+                    if (!string.IsNullOrEmpty(reply.Image))
+                        deletedReplyImageIDs.Add(reply.Image);
                 }
+                if(!string.IsNullOrEmpty(deletePost.Image))
+                    deletedReplyImageIDs.Add(deletePost.Image);
+
                 _context.Replies.RemoveRange(deletePost.Replies);
                 _context.PostReactions.RemoveRange(deletePost.PostReaction);
                 _context.RemoveRange(deletePost);
@@ -240,7 +248,8 @@ namespace CSharpSnackisDB.Controllers
                 {
                     ActionResult deletethread = await DeleteThread(deletePost.Thread.ThreadID);
                 }
-                return Ok();
+                
+                return Ok(deletedReplyImageIDs);
             }
             else
                 return Unauthorized();

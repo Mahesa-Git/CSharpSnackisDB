@@ -115,7 +115,7 @@ namespace CSharpSnackisDB.Controllers
                         thread.Posts = await _context.Posts.Where(x => x.Thread.ThreadID == thread.ThreadID).Include(x => x.Replies).ThenInclude(x => x.PostReaction).ToListAsync();
                     }
                 }
-
+                var postAndReplyImageIDs = new List<string>();
                 foreach (var topic in category.Topics)
                 {
                     foreach (var thread in topic.Threads)
@@ -124,9 +124,15 @@ namespace CSharpSnackisDB.Controllers
                         {
                             foreach (var reply in post.Replies)
                             {
+                                if (!string.IsNullOrEmpty(reply.Image))
+                                    postAndReplyImageIDs.Add(reply.Image);
+
                                 _context.PostReactions.RemoveRange(reply.PostReaction);
                                 _context.Replies.RemoveRange(reply);
                             }
+                            if (!string.IsNullOrEmpty(post.Image))
+                                postAndReplyImageIDs.Add(post.Image);
+
                             _context.PostReactions.RemoveRange(post.PostReaction);
                             _context.Posts.RemoveRange(post);
                         }
@@ -137,7 +143,7 @@ namespace CSharpSnackisDB.Controllers
 
                 _context.RemoveRange(category);
                 await _context.SaveChangesAsync();
-                return Ok();
+                return Ok(postAndReplyImageIDs);
             }
             else
                 return Unauthorized();
@@ -196,15 +202,22 @@ namespace CSharpSnackisDB.Controllers
                     thread.Posts = await _context.Posts.Where(x => x.Thread.ThreadID == thread.ThreadID).Include(x => x.PostReaction).Include(x => x.Replies).ThenInclude(x => x.PostReaction).ToListAsync();
                 }
 
+                var postAndReplyImageIDs = new List<string>();
                 foreach (var thread in topic.Threads)
                 {
                     foreach (var post in thread.Posts)
                     {
                         foreach (var reply in post.Replies)
                         {
+                            if(!string.IsNullOrEmpty(reply.Image))
+                                postAndReplyImageIDs.Add(reply.Image);
+
                             _context.PostReactions.RemoveRange(reply.PostReaction);
                             _context.Replies.RemoveRange(reply);
                         }
+                        if(!string.IsNullOrEmpty(post.Image))
+                            postAndReplyImageIDs.Add(post.Image);
+
                         _context.PostReactions.RemoveRange(post.PostReaction);
                         _context.Posts.RemoveRange(post);
                     }
@@ -213,7 +226,7 @@ namespace CSharpSnackisDB.Controllers
 
                 _context.RemoveRange(topic);
                 await _context.SaveChangesAsync();
-                return Ok();
+                return Ok(postAndReplyImageIDs);
             }
             else
                 return Unauthorized();

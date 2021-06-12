@@ -112,7 +112,7 @@ namespace CSharpSnackisDB.Controllers
         }
         #endregion
 
-        #region BAN/UNBAN/EDIT/GET USER REGION
+        #region BAN/UNBAN/EDIT/GET/REPORT USER REGION
         [HttpGet("GetUsers")]
         public async Task<IActionResult> GetUsers()
         {
@@ -237,6 +237,24 @@ namespace CSharpSnackisDB.Controllers
                 return Unauthorized();
             }
 
+        }
+        [HttpGet("ReportUser/{id}")]
+        public async Task<ActionResult> ReportUser([FromRoute] string id)
+        {
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (user is not null)
+            {
+                var userToReport = await _userManager.FindByIdAsync(id);
+                userToReport.IsReported = true;
+                await _userManager.UpdateAsync(userToReport);
+                return Ok();
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         #endregion
