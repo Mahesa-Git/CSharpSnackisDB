@@ -151,7 +151,7 @@ namespace CSharpSnackisDB.Controllers
             {
                 return BadRequest("Registration failed");
             }
-        }   
+        }
         #endregion
 
         #region USER CRUD REGION
@@ -160,12 +160,12 @@ namespace CSharpSnackisDB.Controllers
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
 
-            var UserCheck = await _userManager.FindByNameAsync(user.UserName);
-
             if (user is not null)
             {
-                
-                user.ProfileText = model.ProfileText;
+                var userToChange = await _context.Users.Where(x => x.Id == model.Id).FirstAsync();
+
+                userToChange.ProfileText = model.ProfileText;
+                _context.Update(userToChange);
 
                 await _context.SaveChangesAsync();
 
@@ -182,8 +182,8 @@ namespace CSharpSnackisDB.Controllers
             var UserMailCheck = await _userManager.FindByEmailAsync(model.Email);
             var UserCheck = await _userManager.FindByNameAsync(model.Username);
 
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            User userEmail = await _userManager.FindByEmailAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Email)).Value);
+            var user = await _context.Users.Where(x => x.Id == model.Id).FirstAsync();
+            User claimedUser = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
 
             bool sameEmail = user.Email == model.Email ? true : false;
             bool sameUsername = user.UserName == model.Username ? true : false;
@@ -199,7 +199,7 @@ namespace CSharpSnackisDB.Controllers
 
             if (user is not null)
             {
-                
+                var roles = await _userManager.GetRolesAsync(claimedUser);
 
                 user.UserName = model.Username;
                 user.NormalizedUserName = model.Username.ToUpper();
@@ -209,30 +209,38 @@ namespace CSharpSnackisDB.Controllers
                 user.Country = model.Country;
 
                 await _context.SaveChangesAsync();
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes("default-key-xxxx-aaaa-qqqq-default-key-xxxx-aaaa-qqqq");
-
-                var exp = DateTime.UtcNow.AddDays(1);
-
-                var tokenDescriptor = new SecurityTokenDescriptor
+                if (roles.Contains("User"))
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var key = Encoding.ASCII.GetBytes("default-key-xxxx-aaaa-qqqq-default-key-xxxx-aaaa-qqqq");
+
+                    var exp = DateTime.UtcNow.AddDays(1);
+
+                    var tokenDescriptor = new SecurityTokenDescriptor
                     {
+                        Subject = new ClaimsIdentity(new Claim[]
+                        {
                             new Claim(ClaimTypes.Name, model.Username),
                             new Claim(ClaimTypes.Email, model.Email)
 
-                    }),
-                    Expires = exp,
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
+                        }),
+                        Expires = exp,
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    };
 
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
-                var userID = user.Id;
-                var roles = await _userManager.GetRolesAsync(user);
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    var tokenString = tokenHandler.WriteToken(token);
+                    var userID = user.Id;
+                    var role = await _userManager.GetRolesAsync(user);
 
-                return Ok(new { Token = tokenString, Expires = exp, userID = userID, Role = roles[0] });
+                    return Ok(new { Token = tokenString, Expires = exp, userID = userID, Role = role[0] });
+
+                }
+                else
+                {
+                    return Ok("admin changed successfully");
+                }
+
             }
             else
             {
@@ -276,8 +284,8 @@ namespace CSharpSnackisDB.Controllers
         public async Task<ActionResult> GetProfile(string Id)
         {
             User user = await _userManager.FindByIdAsync(Id);
-            
-            
+
+
             if (user is not null)
             {
                 return Ok(user);
