@@ -253,13 +253,15 @@ namespace CSharpSnackisDB.Controllers
                 return BadRequest("Error, user not found");
             }
         }
-        [HttpGet("userImageDelete")]
-        public async Task<ActionResult> UserProfileDelete()
+
+        [HttpGet("userImageDelete/{id}")]
+        public async Task<ActionResult> UserProfileDelete([FromRoute] string id)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             if (user is not null)
             {
-                user.Image = null;
+                var userImageToDelete = await _context.Users.Where(x => x.Image == id).FirstAsync();
+                userImageToDelete.Image = null;
                 await _userManager.UpdateAsync(user);
                 return Ok();
             }
