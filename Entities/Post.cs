@@ -24,7 +24,7 @@ namespace CSharpSnackisDB.Entities
         public Post()
         {
             PostID = Guid.NewGuid().ToString();
-            CreateDate = DateTime.Now;
+            CreateDate = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
         }
     }
     public class PostResponseModel

@@ -57,7 +57,7 @@ namespace CSharpSnackisDB
                         // This should be smarter
                         if (user == null)
                         {
-                            context.Fail("UnAuthorized");
+                            context.Fail("Unauthorized");
                         }
                         return Task.CompletedTask;
                     }
@@ -111,10 +111,10 @@ namespace CSharpSnackisDB
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CSharpSnackisDB v1"));
+                
             }
-
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CSharpSnackisDB v1"));
             app.UseHttpsRedirection();
 
             app.UseRouting();

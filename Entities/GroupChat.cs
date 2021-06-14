@@ -15,7 +15,7 @@ namespace CSharpSnackisDB.Entities
         public GroupChat()
         {
             GroupChatID = Guid.NewGuid().ToString();
-            CreateDate = DateTime.Now;
+            CreateDate = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
         }
     }
     public class NewChatModel

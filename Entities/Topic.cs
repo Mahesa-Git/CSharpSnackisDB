@@ -18,7 +18,7 @@ namespace CSharpSnackisDB.Entities
         public Topic()
         {
             TopicID = Guid.NewGuid().ToString();
-            CreateDate = DateTime.Now;
+            CreateDate = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
         }
     }
     public class TopicResponseModel

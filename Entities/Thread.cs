@@ -20,7 +20,7 @@ namespace CSharpSnackisDB.Entities
         public Thread()
         {
             ThreadID = Guid.NewGuid().ToString();
-            CreateDate = DateTime.Now;
+            CreateDate = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
         }
     }
     public class ThreadResponseModel

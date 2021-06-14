@@ -17,7 +17,7 @@ namespace CSharpSnackisDB.Entities
         public Category()
         {
             CategoryID = Guid.NewGuid().ToString();
-            CreateDate = DateTime.Now;
+            CreateDate = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
         }
     }
     public class CategoryResponseModel

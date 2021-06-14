@@ -23,7 +23,7 @@ namespace CSharpSnackisDB.Entities
 
         public User()
         {
-            CreateDate = DateTime.Now;
+            CreateDate = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
         }
 
     }
