@@ -12,7 +12,7 @@ namespace CSharpSnackisDB.Entities
         public string Title { get; set; }
         public string BodyText { get; set; }
         public DateTime CreateDate { get; set; }
-
+        public string Image { get; set; }
         public DateTime EditDate { get; set; }
         public bool IsReported { get; set; }
         public Topic Topic { get; set; }
@@ -20,12 +20,17 @@ namespace CSharpSnackisDB.Entities
         public Thread()
         {
             ThreadID = Guid.NewGuid().ToString();
-            CreateDate = DateTime.Now;
+            DateTime utc = new DateTime();
+            utc = DateTime.UtcNow;
+            TimeZoneInfo cet = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+
+            CreateDate = TimeZoneInfo.ConvertTimeFromUtc(utc, cet);
         }
     }
     public class ThreadResponseModel
     {
         public string Title { get; set; }
+        public string Image { get; set; }
         public string BodyText { get; set; }
         public string TopicId { get; set; }
     }

@@ -115,7 +115,6 @@ namespace CSharpSnackisDB.Controllers
                 return BadRequest();
         }
 
-
         [HttpPost("NewReply")]
         public async Task<ActionResult> NewReply([FromBody] ReplyToChatModel newReply)
         {

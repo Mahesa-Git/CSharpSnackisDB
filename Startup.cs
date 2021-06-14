@@ -52,17 +52,13 @@ namespace CSharpSnackisDB
                 {
                     OnTokenValidated = context =>
                     {
-
                         var userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<User>>();
-
                         var user = userManager.GetUserAsync(context.HttpContext.User);
-
                         // This should be smarter
                         if (user == null)
                         {
-                            context.Fail("UnAuthorized");
+                            context.Fail("Unauthorized");
                         }
-
                         return Task.CompletedTask;
                     }
                 };
@@ -107,9 +103,6 @@ namespace CSharpSnackisDB
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CSharpSnackisDB", Version = "v1" });
             });
-
-            services.AddTransient<IEmailSender, EmailSender>();
-            services.Configure<AuthMessageSenderOptions>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -118,12 +111,12 @@ namespace CSharpSnackisDB
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CSharpSnackisDB v1"));
+                
             }
-
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CSharpSnackisDB v1"));
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseAuthentication();

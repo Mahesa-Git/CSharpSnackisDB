@@ -15,6 +15,7 @@ namespace CSharpSnackisDB.Entities
         public bool IsReported { get; set; }
         public bool IsBanned { get; set; }
         public string Image { get; set; }
+        public List<PostReaction> PostReactions { get; set; }
         public List<Post> Posts { get; set; }
         public List<Reply> Replies { get; set; }
         public List<Thread> Threads { get; set; }
@@ -22,8 +23,22 @@ namespace CSharpSnackisDB.Entities
 
         public User()
         {
-            CreateDate = DateTime.Now;
+            DateTime utc = new DateTime();
+            utc = DateTime.UtcNow;
+            TimeZoneInfo cet = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+
+            CreateDate = TimeZoneInfo.ConvertTimeFromUtc(utc, cet);
         }
 
+    }
+    public class UserReturnModel
+    {
+        public string Id { get; set; }
+        public string Country { get; set; }
+        public DateTime CreateDate { get; set; }
+        public string ProfileText { get; set; }
+        public bool IsReported { get; set; }
+        public bool IsBanned { get; set; }
+        public string Image { get; set; }
     }
 }

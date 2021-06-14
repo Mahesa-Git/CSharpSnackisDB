@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.IO;
+using System.Text;
 
 namespace CSharpSnackisDB.Controllers
 {
@@ -84,6 +86,26 @@ namespace CSharpSnackisDB.Controllers
             }
             else
                 return BadRequest();
+        }
+        [HttpPost("SeedFilteredWords")]
+        public async Task<ActionResult> SeedFilteredWords()
+        {
+            if (IsAdmin().Result == true)
+            {
+                string[] filteredWords = Services.FilteredWordsCheck.SeedWords();
+                foreach (var word in filteredWords)
+                {
+                    var wordIns = new FilteredWords();
+                    wordIns.Words = word;
+                    await _context.FilteredWords.AddAsync(wordIns);
+                }
+                    await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

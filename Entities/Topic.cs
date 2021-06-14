@@ -18,7 +18,11 @@ namespace CSharpSnackisDB.Entities
         public Topic()
         {
             TopicID = Guid.NewGuid().ToString();
-            CreateDate = DateTime.Now;
+            DateTime utc = new DateTime();
+            utc = DateTime.UtcNow;
+            TimeZoneInfo cet = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+
+            CreateDate = TimeZoneInfo.ConvertTimeFromUtc(utc, cet);
         }
     }
     public class TopicResponseModel

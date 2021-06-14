@@ -37,7 +37,7 @@ namespace CSharpSnackisDB.Controllers
             _sender = sender;
         }
 
-        #region LOGIN/REGISTER/MAILAUTHENTICATION REGION
+        #region LOGIN/REGISTER REGION
 
         private bool MailChecker(string email)
         {
@@ -118,7 +118,7 @@ namespace CSharpSnackisDB.Controllers
                 NormalizedEmail = model.Email.ToUpper(),
                 Country = model.Country,
                 MailToken = null,
-                EmailConfirmed = true, //ÄNDRA SEN NÄR DEPLOY MAILAUTH
+                EmailConfirmed = true,
                 ProfileText = model.ProfileText,
                 Image = model.Image
 
@@ -143,24 +143,8 @@ namespace CSharpSnackisDB.Controllers
 
             if (result.Succeeded)
             {
-                //User user = await _userManager.FindByNameAsync(newUser.UserName);
-
                 await _userManager.AddToRoleAsync(newUser, "User");
-
-                //var userId = await _userManager.GetUserIdAsync(newUser);
-                //var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-
-                //user.MailToken = token;
                 await _context.SaveChangesAsync();
-
-                //var urlContent = Url.Content($"https://{ApiKey}/userauth/Mailauthentication/{userId}");
-                //var link = Url.Content($"https://{FeKey}/index"); 
-
-                //await _sender.SendEmailAsync(newUser.Email, "Bekräfta din e-post genom att klicka på länken", "<p>Klicka här för att bekräfta din e-post</p>" + urlContent +
-                //                                            "</br></br><p>Fungerar inte länken? Få ett nytt utskick genom att försöka logga in på hemsidan:</br></br>" +
-                //                                            $" {link}");
-
-                //return Ok(newUser.Id);
                 return Ok();
             }
             else
@@ -168,82 +152,38 @@ namespace CSharpSnackisDB.Controllers
                 return BadRequest("Registration failed");
             }
         }
-
-        [AllowAnonymous]
-        [HttpGet("ResendMail/{id}")]
-        public async Task<ActionResult> ResendAuthMail(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user is not null)
-            {
-                var urlContent = Url.Content($"https://{ApiKey}/userauth/Mailauthentication/{user.Id}");
-                var link = Url.Content($"https://{FeKey}/index"); // ändra sen FE
-
-                await _sender.SendEmailAsync(user.Email, "Bekräfta din e-post genom att klicka på länken", "<p>Klicka här för att bekräfta din e-post</p>" + urlContent +
-                                                            "</br></br><p>Fungerar inte länken? Få ett nytt utskick genom att försöka logga in på hemsidan:</br></br>" +
-                                                            $" {link}");
-                return Redirect($"https://{FeKey}/RegisterConfirmation"); // ÄNDRA SEN FE
-            }
-            else
-                return BadRequest("User not found. Try to create another user or contact us at ggwebbshop@gmail.com");
-        }
-
-        [AllowAnonymous]
-        [HttpGet("MailAuthentication/{id}")]
-        public async Task<ActionResult> AuthenticateEmail(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
-                return BadRequest("The user was not found. It might be deleted. If it's your account and you've not yet validated your e-mail by clicking the sent link for validation of the account: check your e-mail for messages that might be generated after your first attempt.");
-
-            if (user.EmailConfirmed == true)
-                return BadRequest("The account have already been activated for this user");
-
-            var result = await _userManager.ConfirmEmailAsync(user, user.MailToken);
-
-            if (result.Succeeded)
-            {
-                user.MailToken = null;
-                await _context.SaveChangesAsync();
-                return Redirect($"https://{FeKey}/SuccessfulEmailConfirm"); // ÄNDRA SEN FE
-            }
-
-            else
-                return BadRequest("Contact administrator for setting the mailauthentication manually at ggwebshop@gmail.com");
-        }
         #endregion
 
         #region USER CRUD REGION
-        [HttpDelete("userdelete")]
-        public async Task<ActionResult> UserDelete()
+        [HttpPut("userProfileTextUpdate")]
+        public async Task<ActionResult> UserProfileTextUpdate([FromBody] RegisterModel model)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            var roles = await _userManager.GetRolesAsync(user);
 
-            try
+            if (user is not null)
             {
-                _context.Remove(user);
+                var userToChange = await _context.Users.Where(x => x.Id == model.Id).FirstAsync();
+
+                userToChange.ProfileText = model.ProfileText;
+                _context.Update(userToChange);
+
                 await _context.SaveChangesAsync();
 
+                return Ok();
             }
-            catch (Exception ex)
+            else
             {
-                return BadRequest(ex);
-
+                return BadRequest("Error, user not found");
             }
-            return Ok();
-
         }
-
-        [HttpPut("userupdate")]
-        public async Task<ActionResult> UserUpdate([FromBody] RegisterModel model)
+        [HttpPut("userProfileUpdate")]
+        public async Task<ActionResult> UserProfileUpdate([FromBody] RegisterModel model)
         {
-            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-            User userEmail = await _userManager.FindByEmailAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Email)).Value);
+            var UserMailCheck = await _userManager.FindByEmailAsync(model.Email);
+            var UserCheck = await _userManager.FindByNameAsync(model.Username);
 
-            var UserCheck = await _userManager.FindByNameAsync(user.UserName);
-            var UserMailCheck = await _userManager.FindByEmailAsync(userEmail.Email);
+            var user = await _context.Users.Where(x => x.Id == model.Id).FirstAsync();
+            User claimedUser = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
 
             bool sameEmail = user.Email == model.Email ? true : false;
             bool sameUsername = user.UserName == model.Username ? true : false;
@@ -259,58 +199,63 @@ namespace CSharpSnackisDB.Controllers
 
             if (user is not null)
             {
+                var roles = await _userManager.GetRolesAsync(claimedUser);
+
                 user.UserName = model.Username;
-                user.Email = model.Email;
-                user.Country = model.Country;
-                user.MailToken = null;
-                user.EmailConfirmed = false;
                 user.NormalizedUserName = model.Username.ToUpper();
+                user.Email = model.Email;
                 user.NormalizedEmail = model.Email.ToUpper();
+                user.EmailConfirmed = true;
+                user.Country = model.Country;
 
                 await _context.SaveChangesAsync();
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes("default-key-xxxx-aaaa-qqqq-default-key-xxxx-aaaa-qqqq");
-
-                var exp = DateTime.UtcNow.AddDays(1);
-
-                var tokenDescriptor = new SecurityTokenDescriptor
+                if (roles.Contains("User"))
                 {
-                    Subject = new ClaimsIdentity(new Claim[]
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var key = Encoding.ASCII.GetBytes("default-key-xxxx-aaaa-qqqq-default-key-xxxx-aaaa-qqqq");
+
+                    var exp = DateTime.UtcNow.AddDays(1);
+
+                    var tokenDescriptor = new SecurityTokenDescriptor
                     {
+                        Subject = new ClaimsIdentity(new Claim[]
+                        {
                             new Claim(ClaimTypes.Name, model.Username),
                             new Claim(ClaimTypes.Email, model.Email)
 
-                    }),
-                    Expires = exp,
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
+                        }),
+                        Expires = exp,
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    };
 
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    var tokenString = tokenHandler.WriteToken(token);
+                    var userID = user.Id;
+                    var role = await _userManager.GetRolesAsync(user);
 
-                return Ok(new { Token = tokenString, Expires = exp });
+                    return Ok(new { Token = tokenString, Expires = exp, userID = userID, Role = role[0] });
+
+                }
+                else
+                {
+                    return Ok("admin changed successfully");
+                }
+
             }
             else
             {
                 return BadRequest("Error, user not found");
             }
         }
-
-        [HttpPut("userProfileTextUpdate")]
-        public async Task<ActionResult> UserProfileTextUpdate([FromBody] RegisterModel model)
+        [HttpGet("userImageUpdate/{id}")]
+        public async Task<ActionResult> UserProfileUpdate([FromRoute] string id)
         {
+
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-
-            var UserCheck = await _userManager.FindByNameAsync(user.UserName);
-
             if (user is not null)
             {
-                
-                user.ProfileText = model.ProfileText;
-
-                await _context.SaveChangesAsync();
-
+                user.Image = id;
+                await _userManager.UpdateAsync(user);
                 return Ok();
             }
             else
@@ -319,42 +264,27 @@ namespace CSharpSnackisDB.Controllers
             }
         }
 
-        [HttpPost("changepassword")]
-        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordModel model)
+        [HttpGet("userImageDelete/{id}")]
+        public async Task<ActionResult> UserImageDelete([FromRoute] string id)
         {
-
-            if (model.NewPassword == model.ConfirmNewPassword)
+            User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
+            if (user is not null)
             {
-                User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-
-                if (user is not null)
-                {
-                    if (await _userManager.CheckPasswordAsync(user, model.CurrentPassword))
-                    {
-                        await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-
-                        return Ok(new { message = "Password has been updated." });
-                    }
-                    else
-                    {
-                        return NotFound(new { message = $"Your password is incorrect. ({user.AccessFailedCount}) failed attempts." });
-                    }
-                }
-                else
-                {
-                    return BadRequest(new { message = "No such user found." });
-                }
+                var userImageToDelete = await _context.Users.Where(x => x.Image == id).FirstAsync();
+                userImageToDelete.Image = null;
+                await _userManager.UpdateAsync(userImageToDelete);
+                return Ok();
             }
             else
             {
-                return BadRequest(new { message = "Your password does not match." });
+                return BadRequest("Error, user not found");
             }
         }
-
         [HttpGet("profile/{id}")]
         public async Task<ActionResult> GetProfile(string Id)
         {
             User user = await _userManager.FindByIdAsync(Id);
+
 
             if (user is not null)
             {

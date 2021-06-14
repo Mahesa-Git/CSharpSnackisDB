@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSharpSnackisDB.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20210609075559_init")]
+    [Migration("20210614163243_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,6 +83,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<DateTime>("EditDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
@@ -145,6 +148,9 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<string>("GroupChatID")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
 
@@ -183,6 +189,9 @@ namespace CSharpSnackisDB.Migrations
 
                     b.Property<DateTime>("EditDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsReported")
                         .HasColumnType("bit");
@@ -289,9 +298,6 @@ namespace CSharpSnackisDB.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PostReactionID")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ProfileText")
                         .HasColumnType("nvarchar(max)");
 
@@ -315,8 +321,6 @@ namespace CSharpSnackisDB.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("PostReactionID");
-
                     b.ToTable("AspNetUsers");
 
                     b.HasData(
@@ -324,8 +328,8 @@ namespace CSharpSnackisDB.Migrations
                         {
                             Id = "admin-c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2f459ff3-0ac6-4228-a486-d9b17bc9a2cd",
-                            CreateDate = new DateTime(2021, 6, 9, 9, 55, 59, 401, DateTimeKind.Local).AddTicks(4613),
+                            ConcurrencyStamp = "eb6101e3-34fa-421a-8eca-fa3d4eba3f57",
+                            CreateDate = new DateTime(2021, 6, 14, 18, 32, 42, 589, DateTimeKind.Local).AddTicks(552),
                             Email = "admin@csharpsnackis.api",
                             EmailConfirmed = true,
                             IsBanned = false,
@@ -333,9 +337,9 @@ namespace CSharpSnackisDB.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@csharsnackis.API",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJJNgSxwA7JihVF7mWfNCF1HmUhFNoItUNE9eyEypXpC4lycY6DvDRZtLMaBT4N3HQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOSR+Uk4OHA1qS61BGE1/Ay7RmTIYYU5Ys0GUwXe4w7C/8fCP7fEbZALBgVvQ6Giow==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "87691e89-afa3-4c5a-8e63-11607514cf93",
+                            SecurityStamp = "4952b9c7-a9a6-4efe-a960-6d8b4811ac9b",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -386,14 +390,14 @@ namespace CSharpSnackisDB.Migrations
                         new
                         {
                             Id = "root-0c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "c854096b-f5d9-4d8d-aaf8-f957cb98329b",
+                            ConcurrencyStamp = "9a0d32ef-15fb-4747-92ec-ab1361e53c20",
                             Name = "root",
                             NormalizedName = "ROOT"
                         },
                         new
                         {
                             Id = "user-2c0-aa65-4af8-bd17-00bd9344e575",
-                            ConcurrencyStamp = "8639b9b8-09ae-4751-bc61-e40df7d6470d",
+                            ConcurrencyStamp = "cbca5bb7-7788-4879-9c48-ed31504aa1fc",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -514,6 +518,21 @@ namespace CSharpSnackisDB.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("PostReactionUser", b =>
+                {
+                    b.Property<string>("PostReactionsPostReactionID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PostReactionsPostReactionID", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("PostReactionUser");
+                });
+
             modelBuilder.Entity("CSharpSnackisDB.Entities.Post", b =>
                 {
                     b.HasOne("CSharpSnackisDB.Entities.PostReaction", "PostReaction")
@@ -586,13 +605,6 @@ namespace CSharpSnackisDB.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("CSharpSnackisDB.Entities.User", b =>
-                {
-                    b.HasOne("CSharpSnackisDB.Entities.PostReaction", null)
-                        .WithMany("Users")
-                        .HasForeignKey("PostReactionID");
-                });
-
             modelBuilder.Entity("GroupChatUser", b =>
                 {
                     b.HasOne("CSharpSnackisDB.Entities.GroupChat", null)
@@ -659,6 +671,21 @@ namespace CSharpSnackisDB.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PostReactionUser", b =>
+                {
+                    b.HasOne("CSharpSnackisDB.Entities.PostReaction", null)
+                        .WithMany()
+                        .HasForeignKey("PostReactionsPostReactionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CSharpSnackisDB.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CSharpSnackisDB.Entities.Category", b =>
                 {
                     b.Navigation("Topics");
@@ -672,11 +699,6 @@ namespace CSharpSnackisDB.Migrations
             modelBuilder.Entity("CSharpSnackisDB.Entities.Post", b =>
                 {
                     b.Navigation("Replies");
-                });
-
-            modelBuilder.Entity("CSharpSnackisDB.Entities.PostReaction", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("CSharpSnackisDB.Entities.Thread", b =>
