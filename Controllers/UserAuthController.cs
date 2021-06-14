@@ -199,6 +199,8 @@ namespace CSharpSnackisDB.Controllers
 
             if (user is not null)
             {
+                
+
                 user.UserName = model.Username;
                 user.NormalizedUserName = model.Username.ToUpper();
                 user.Email = model.Email;
@@ -255,50 +257,19 @@ namespace CSharpSnackisDB.Controllers
         }
 
         [HttpGet("userImageDelete/{id}")]
-        public async Task<ActionResult> UserProfileDelete([FromRoute] string id)
+        public async Task<ActionResult> UserImageDelete([FromRoute] string id)
         {
             User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
             if (user is not null)
             {
                 var userImageToDelete = await _context.Users.Where(x => x.Image == id).FirstAsync();
                 userImageToDelete.Image = null;
-                await _userManager.UpdateAsync(user);
+                await _userManager.UpdateAsync(userImageToDelete);
                 return Ok();
             }
             else
             {
                 return BadRequest("Error, user not found");
-            }
-        }
-        [HttpPost("changepassword")]
-        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordModel model)
-        {
-
-            if (model.NewPassword == model.ConfirmNewPassword)
-            {
-                User user = await _userManager.FindByNameAsync(User.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Name)).Value);
-
-                if (user is not null)
-                {
-                    if (await _userManager.CheckPasswordAsync(user, model.CurrentPassword))
-                    {
-                        await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-
-                        return Ok(new { message = "Password has been updated." });
-                    }
-                    else
-                    {
-                        return NotFound(new { message = $"Your password is incorrect. ({user.AccessFailedCount}) failed attempts." });
-                    }
-                }
-                else
-                {
-                    return BadRequest(new { message = "No such user found." });
-                }
-            }
-            else
-            {
-                return BadRequest(new { message = "Your password does not match." });
             }
         }
         [HttpGet("profile/{id}")]

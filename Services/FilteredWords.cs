@@ -27,7 +27,7 @@ namespace CSharpSnackisDB.Services
         }
         public static string[] SeedWords()
         {
-            string[] WordArr = File.ReadAllLines(@"Files\filteredwords.txt");
+            string[] WordArr = File.ReadAllLines(@"wwwroot\Files\filteredwords.txt");
             return WordArr;
 
         }

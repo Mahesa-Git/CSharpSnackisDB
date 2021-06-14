@@ -116,7 +116,7 @@ namespace CSharpSnackisDB
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CSharpSnackisDB v1"));
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseAuthentication();
