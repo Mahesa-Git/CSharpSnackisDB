@@ -20,7 +20,11 @@ namespace CSharpSnackisDB.Entities
         public Thread()
         {
             ThreadID = Guid.NewGuid().ToString();
-            CreateDate = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
+            DateTime utc = new DateTime();
+            utc = DateTime.UtcNow;
+            TimeZoneInfo cet = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+
+            CreateDate = TimeZoneInfo.ConvertTimeFromUtc(utc, cet);
         }
     }
     public class ThreadResponseModel
